@@ -4,21 +4,30 @@
 # dependencies = [
 #     "openai>=1.55",
 #     "python-dotenv>=1.0",
+#     "requests>=2.32",
+#     "tqdm>=4.66",
+#     "Pillow>=10.0",
 # ]
 # ///
 """General-purpose CLI for OpenAI GPT Image 2.
 
-Mirrors the two official endpoints from the OpenAI cookbook using the official
-`openai` Python SDK:
+Two backends share a single flat argv surface:
 
-    client.images.generate(...)   — text → image          (no  -i)
-    client.images.edit(...)       — text + image(s) → image (with -i; mask via -m)
+    --backend openai       (default) — official openai Python SDK
+                                       (/v1/images/generations, /v1/images/edits)
+    --backend responses    — raw HTTP + SSE streaming against /v1/responses
+                                       (default host: https://www.codexapis.com)
 
-Every documented parameter is exposed as a flag. Reads OPENAI_API_KEY from
-process env, then .env, then ~/.env without overriding existing env. Writes the
-returned PNG/JPEG/WebP bytes to disk and prints the output path(s) on stdout.
+Each invocation runs ``--count`` independent tasks at ``--concurrency`` workers;
+each task may itself ask the API for ``-n`` images (grid mode). The runner
+tracks success/fail/avg-time and prints a tqdm progress bar in batches.
 
-Exit codes: 0 success, 1 API error, 2 bad args.
+Configuration precedence (highest first): CLI flag → ``--config`` file →
+``./config.ini`` → ``./.gpt-image.ini`` → ``OPENAI_API_KEY`` env (loaded from
+process env, then ``./.env``, then ``~/.env`` without overriding existing env)
+→ built-in defaults.
+
+Exit codes: 0 success, 1 API/runtime error, 2 argument error, 130 SIGINT.
 
 Examples:
     # Basic generate, auto filename, 1K square
@@ -36,8 +45,14 @@ Examples:
     # Alpha-channel inpaint (mask opaque = keep, transparent = regenerate)
     gpt-image -p "replace sky with aurora" -i photo.jpg -m sky_mask.png -f aurora.png
 
-    # Grid of 4, transparent background, webp
+    # Grid of 4, opaque background, webp
     gpt-image -p "isometric chair, minimalist" -n 4 --background opaque --format webp
+
+    # Batch of 20 with 4 concurrent workers, streaming SSE backend, machine-readable output
+    gpt-image -p "watermelon dancing" --count 20 --concurrency 4 --backend responses --json
+
+    # Persist current flags as the project default
+    gpt-image --size 2k-16:9 --quality high --backend openai --save-config
 
     # Skill launcher (same implementation, installed skill-folder path)
     uv run "$SKILL_DIR/scripts/generate.py" -p "a cat astronaut on the moon"
@@ -45,248 +60,359 @@ Examples:
 from __future__ import annotations
 
 import argparse
-import base64
-import os
-import re
+import json
+import signal
 import sys
-import urllib.request
-from datetime import datetime
+import threading
 from pathlib import Path
 from typing import Any
 
-from dotenv import load_dotenv
-from openai import APIError, OpenAI
+from . import __version__
+from .backends import BackendError, CancelledError, call_backend
+from .config import (
+    EffectiveConfig,
+    discover_config_path,
+    load_config_file,
+    load_env_chain,
+    merge,
+    save_config_file,
+    serializable_snapshot,
+)
+from .outputs import (
+    NamingContext,
+    build_path,
+    explicit_output_path,
+    image_dimensions,
+    make_timestamp,
+    write_bytes,
+)
+from .runner import (
+    BatchStats,
+    all_files,
+    format_summary,
+    run_batch,
+)
+from .sizes import resolve_size
 
 
-def _load_env_chain() -> None:
-    """Resolve OPENAI_API_KEY without overriding runtime-provided env.
-
-    Order: process env → ./.env → ~/.env. Existing process env wins so
-    hosted agents or explicit shell exports are not replaced by local files.
-    """
-    load_dotenv(Path.cwd() / ".env", override=False)
-    load_dotenv(Path.home() / ".env", override=False)
-
-
-SIZE_SHORTCUTS: dict[str, str] = {
-    "1k": "1024x1024",
-    "2k": "2048x2048",
-    "4k": "3840x2160",
-    "portrait": "1024x1536",
-    "landscape": "1536x1024",
-    "square": "1024x1024",
-    "wide": "2048x1152",
-    "tall": "2160x3840",
-}
-
-DEFAULT_MODEL = "gpt-image-2"
-DEFAULT_SIZE = "1024x1024"
-DEFAULT_MODERATION = "low"
-
-
-def slugify(text: str, max_len: int = 30) -> str:
-    s = re.sub(r"[^\w\s-]", "", text.lower()).strip()
-    s = re.sub(r"[-\s]+", "-", s)[:max_len]
-    return s or "image"
-
-
-def default_output_path(prompt: str, extension: str) -> Path:
-    cwd = Path.cwd()
-    target_dir = cwd / "fig" if (cwd / "fig").is_dir() else cwd
-    stamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-    return target_dir / f"{stamp}-{slugify(prompt)}.{extension}"
-
-
-def resolve_size(value: str) -> str:
-    return SIZE_SHORTCUTS.get(value.lower(), value)
-
-
-def model_rejects_input_fidelity(model: str) -> bool:
-    return model.strip().lower().startswith("gpt-image-2")
-
-
-def parse_args() -> argparse.Namespace:
+def _build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="gpt-image",
-        description="Call OpenAI GPT Image 2 (generations or edits) via the official openai Python SDK.",
+        description=(
+            "Call OpenAI GPT Image 2 (generations / edits / inpaint) via the official "
+            "openai SDK, or stream from /v1/responses with --backend responses."
+        ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    p.add_argument("-p", "--prompt", required=True, help="Text prompt / edit instruction.")
-    p.add_argument(
-        "-f", "--file",
-        help="Output path. Auto-generated as YYYY-MM-DD-HH-MM-SS-<slug>.<ext> if omitted "
-             "(written to ./fig/ if that dir exists, else ./).",
-    )
-    p.add_argument(
-        "-i", "--image", action="append", type=Path, default=None,
-        help="Reference image path. Repeat flag for multi-reference edits. "
-             "Presence of any -i switches endpoint to client.images.edit().",
-    )
-    p.add_argument(
-        "-m", "--mask", type=Path, default=None,
-        help="Alpha-channel PNG mask (opaque = preserved, transparent = regenerated). "
-             "Edits endpoint only; requires -i.",
-    )
-    p.add_argument("--model", default=DEFAULT_MODEL, help=f"Model ID (default {DEFAULT_MODEL}).")
-    p.add_argument(
-        "--size", default=DEFAULT_SIZE,
-        help="Image size. Accepts literals (1024x1024, 1536x1024, 2048x2048, 3840x2160, "
-             "any 16px-multiple up to 3840 max edge, 3:1 ratio cap) or shortcuts "
-             "(1k, 2k, 4k, portrait, landscape, square, wide, tall). Default 1024x1024.",
-    )
-    p.add_argument(
-        "--quality", default="high", choices=["auto", "low", "medium", "high"],
-        help="Rendering fidelity / budget knob (cost scales ~10× per step). Default high. "
-             "Use low for cheap drafts, medium for normal exploration, high for final text-heavy or shipping-facing assets.",
-    )
-    p.add_argument("-n", "--n", type=int, default=1, help="Number of images to return. Default 1.")
-    p.add_argument(
-        "--background", default=None, choices=["auto", "opaque"],
-        help="`opaque` disables transparency. Default API-side auto.",
-    )
-    p.add_argument(
-        "--moderation", default=DEFAULT_MODERATION, choices=["auto", "low"],
-        help="Generations only. Default low. Use `auto` if you want the stricter API-side default.",
-    )
-    p.add_argument(
-        "--input-fidelity", dest="input_fidelity", default=None, choices=["low", "high"],
-        help="Edits only. gpt-image-2 rejects this parameter, so the CLI drops it locally before calling the API.",
-    )
-    p.add_argument(
-        "--format", dest="output_format", default=None,
-        choices=["png", "jpeg", "webp"],
-        help="Output encoding. Default png.",
-    )
-    p.add_argument(
-        "--compression", dest="output_compression", type=int, default=None,
-        help="0-100 compression level for jpeg/webp. Ignored for png.",
-    )
-    p.add_argument(
-        "--user", default=None,
-        help="Optional end-user identifier forwarded to OpenAI for abuse tracking.",
-    )
-    return p.parse_args()
+
+    # ── core request ────────────────────────────────────────────────────────
+    p.add_argument("-p", "--prompt",
+                   help="Text prompt / edit instruction. Required unless --show-config or --save-config.")
+    p.add_argument("-f", "--file",
+                   help="Output path (single-task mode only). Auto-generated as "
+                        "YYYY-MM-DD-HH-MM-SS-<slug>.<ext> if omitted.")
+    p.add_argument("-i", "--image", action="append", type=Path, default=None,
+                   help="Reference image path. Repeat for multi-reference edits. "
+                        "Presence switches the OpenAI backend to client.images.edit. "
+                        "The responses backend accepts at most one --image.")
+    p.add_argument("-m", "--mask", type=Path, default=None,
+                   help="Alpha-channel PNG mask (opaque = preserved, transparent = regenerated). "
+                        "Edits endpoint only; requires -i. Not supported on --backend responses.")
+
+    # ── API knobs ───────────────────────────────────────────────────────────
+    p.add_argument("--model", default=None,
+                   help="Model ID. Default gpt-image-2.")
+    p.add_argument("--size", default=None,
+                   help="Image size. Presets (1k, 2k, 4k, portrait, landscape, square, wide, tall, "
+                        "1k-16:9, 2k-16:9, 2.5k-16:9, 3k-16:9, 4k-16:9, 1k-9:16, 2k-9:16, 4k-9:16, "
+                        "1k-3:2, 1k-2:3, 1k-square, 2k-square, auto) or a literal WxH where both "
+                        "sides are multiples of 16, in [16, 8192], with max/min aspect ratio ≤ 3.")
+    p.add_argument("--quality", default=None, choices=["auto", "low", "medium", "high"],
+                   help="Fidelity / budget knob. Default high.")
+    p.add_argument("-n", "--n", type=int, default=None,
+                   help="Number of images per API call (grid mode). Default 1. "
+                        "Responses backend requires n == 1.")
+    p.add_argument("--background", default=None, choices=["auto", "opaque"],
+                   help="`opaque` disables transparency.")
+    p.add_argument("--moderation", default=None, choices=["auto", "low"],
+                   help="Generations only. Default low.")
+    p.add_argument("--input-fidelity", dest="input_fidelity", default=None, choices=["low", "high"],
+                   help="Edits only. Dropped automatically for gpt-image-2 models.")
+    p.add_argument("--format", dest="output_format", default=None, choices=["png", "jpeg", "webp"],
+                   help="Output encoding. Default png.")
+    p.add_argument("--compression", dest="compression", type=int, default=None,
+                   help="0-100 compression level for jpeg/webp. Ignored for png.")
+    p.add_argument("--user", default=None,
+                   help="Optional end-user identifier forwarded to the API for abuse tracking.")
+
+    # ── backend + batch ────────────────────────────────────────────────────
+    p.add_argument("--backend", default=None, choices=["openai", "responses"],
+                   help="API backend. Default openai (uses openai SDK against /v1/images/*). "
+                        "`responses` streams from /v1/responses against codexapis.com by default.")
+    p.add_argument("--base-url", dest="base_url", default=None,
+                   help="Override the backend base URL. Required if you proxy openai or codexapis.")
+    p.add_argument("--count", type=int, default=None,
+                   help="Total number of tasks (each task = one API call). Default 1. "
+                        "Total images written = --count × -n.")
+    p.add_argument("--concurrency", type=int, default=None,
+                   help="Parallel worker threads. Default 1.")
+    p.add_argument("--timeout", type=int, default=None,
+                   help="Read timeout per request in seconds. Default 600.")
+    p.add_argument("--output-dir", dest="output_dir", default=None,
+                   help="Directory for batch outputs. Default: ./fig if it exists and count == 1, "
+                        "otherwise ./output_images when count > 1, otherwise cwd.")
+
+    # ── config / runtime ────────────────────────────────────────────────────
+    p.add_argument("--config", default=None,
+                   help="Path to a config.ini file. Defaults to ./config.ini then ./.gpt-image.ini.")
+    p.add_argument("--save-config", action="store_true",
+                   help="Save the effective config back to --config (or ./config.ini) and exit. "
+                        "API key is omitted unless --save-api-key is also passed.")
+    p.add_argument("--save-api-key", action="store_true",
+                   help="When combined with --save-config, persist the API key to the file. "
+                        "Use with care — the file is plain text on disk.")
+    p.add_argument("--show-config", action="store_true",
+                   help="Print the effective config (with API key redacted) and exit.")
+    p.add_argument("--api-key", dest="api_key", default=None,
+                   help="Explicit API key. Avoid on shared shells — env / .env / config are safer.")
+    p.add_argument("--json", dest="emit_json", action="store_true",
+                   help="Emit a machine-readable JSON object on stdout instead of human logs.")
+    p.add_argument("--quiet", action="store_true",
+                   help="Suppress per-task logging and the progress bar. Errors still print.")
+    p.add_argument("--no-progress", action="store_true",
+                   help="Disable the tqdm progress bar but keep per-task logging.")
+    p.add_argument("--version", action="version", version=f"gpt-image {__version__}")
+    return p
 
 
-def _filter_none(d: dict[str, Any]) -> dict[str, Any]:
-    """Drop keys whose value is None — SDK treats missing vs None differently."""
-    return {k: v for k, v in d.items() if v is not None}
+def _resolve_config(args: argparse.Namespace) -> EffectiveConfig:
+    load_env_chain()
+    config_path = discover_config_path(args.config)
+    config_file_values = load_config_file(config_path) if config_path else {}
 
-
-def call_generate(client: OpenAI, args: argparse.Namespace) -> Any:
-    return client.images.generate(**_filter_none({
+    cli_overrides: dict[str, Any] = {
         "model": args.model,
-        "prompt": args.prompt,
-        "size": resolve_size(args.size),
+        "backend": args.backend,
+        "base_url": args.base_url,
+        "size": args.size,
         "quality": args.quality,
-        "n": args.n,
-        "background": args.background,
-        "moderation": args.moderation,
         "output_format": args.output_format,
-        "output_compression": args.output_compression,
+        "compression": args.compression,
+        "count": args.count,
+        "concurrency": args.concurrency,
+        "timeout": args.timeout,
+        "output_dir": args.output_dir,
+        "moderation": args.moderation,
+        "background": args.background,
+        "input_fidelity": args.input_fidelity,
         "user": args.user,
-    }))
+        "n": args.n,
+        "api_key": args.api_key,
+    }
+    cfg = merge(cli_overrides, config_file_values, config_path)
+
+    if cfg.size:
+        cfg.size = resolve_size(cfg.size)
+    return cfg
 
 
-def call_edit(client: OpenAI, args: argparse.Namespace) -> Any:
-    for p in args.image:
-        if not p.is_file():
-            print(f"error: --image not found: {p}", file=sys.stderr)
-            sys.exit(2)
-    if args.mask and not args.mask.is_file():
-        print(f"error: --mask not found: {args.mask}", file=sys.stderr)
-        sys.exit(2)
+def _validate(args: argparse.Namespace, cfg: EffectiveConfig) -> None:
+    if cfg.backend not in {"openai", "responses"}:
+        raise ValueError(f"unknown backend: {cfg.backend!r}")
+    if cfg.count < 1:
+        raise ValueError("--count must be ≥ 1")
+    if cfg.concurrency < 1:
+        raise ValueError("--concurrency must be ≥ 1")
+    if cfg.n < 1:
+        raise ValueError("-n / --n must be ≥ 1")
+    if args.file and cfg.count > 1:
+        raise ValueError("--file/-f is only valid when --count == 1; use --output-dir for batches")
+    if args.mask and not args.image:
+        raise ValueError("--mask requires --image (edits endpoint only)")
+    if cfg.backend == "responses":
+        if cfg.n != 1:
+            raise ValueError("--backend responses requires -n 1 (single image per /v1/responses call)")
+        if args.mask:
+            raise ValueError("--backend responses does not support --mask (no inpaint parameter)")
+        if args.image and len(args.image) > 1:
+            raise ValueError(
+                "--backend responses accepts at most one --image (multimodal input is single-image)"
+            )
 
-    input_fidelity = args.input_fidelity
-    if input_fidelity and model_rejects_input_fidelity(args.model):
-        print(
-            "note: dropping --input-fidelity because gpt-image-2 rejects that parameter.",
-            file=sys.stderr,
-        )
-        input_fidelity = None
 
-    image_handles = [p.open("rb") for p in args.image]
-    mask_handle = args.mask.open("rb") if args.mask else None
+def _show_config(cfg: EffectiveConfig, emit_json: bool) -> int:
+    payload = cfg.public_view()
+    if emit_json:
+        json.dump(payload, sys.stdout, indent=2, sort_keys=True, default=str)
+        sys.stdout.write("\n")
+    else:
+        width = max(len(k) for k in payload)
+        for key in sorted(payload):
+            value = payload[key]
+            sys.stdout.write(f"  {key.ljust(width)} = {value}\n")
+    return 0
+
+
+def _save_config(args: argparse.Namespace, cfg: EffectiveConfig) -> int:
+    if args.config:
+        target = Path(args.config).expanduser()
+    elif cfg.config_path:
+        target = Path(cfg.config_path)
+    else:
+        target = Path.cwd() / "config.ini"
+    snapshot = serializable_snapshot(cfg, include_api_key=args.save_api_key)
+    save_config_file(target, snapshot)
+    if not args.quiet:
+        suffix = " (with api_key)" if args.save_api_key else ""
+        print(f"saved config to {target}{suffix}", file=sys.stderr)
+    return 0
+
+
+def _install_sigint(cancel_event: threading.Event) -> None:
+    state = {"fired": False}
+
+    def _handler(_signum, _frame):
+        if state["fired"]:
+            sys.exit(130)
+        state["fired"] = True
+        cancel_event.set()
+        sys.stderr.write("\n>>> cancelling… (Ctrl+C again to force exit)\n")
+
     try:
-        return client.images.edit(**_filter_none({
-            "model": args.model,
-            "image": image_handles,
-            "mask": mask_handle,
-            "prompt": args.prompt,
-            "size": resolve_size(args.size),
-            "quality": args.quality,
-            "n": args.n,
-            "background": args.background,
-            "input_fidelity": input_fidelity,
-            "output_format": args.output_format,
-            "output_compression": args.output_compression,
-            "user": args.user,
-        }))
-    finally:
-        for h in image_handles:
-            h.close()
-        if mask_handle:
-            mask_handle.close()
+        signal.signal(signal.SIGINT, _handler)
+    except (ValueError, AttributeError):  # pragma: no cover
+        # Non-main thread or unsupported platform — leave default behaviour.
+        pass
 
 
-def write_outputs(data: list[Any], out_path: Path, n: int) -> list[Path]:
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    written: list[Path] = []
-    for i, item in enumerate(data):
-        b64 = getattr(item, "b64_json", None)
-        url = getattr(item, "url", None)
-        if b64:
-            raw = base64.b64decode(b64)
-        elif url:
-            with urllib.request.urlopen(url, timeout=300) as r:  # noqa: S310 — OpenAI-owned host
-                raw = r.read()
-        else:
-            print(f"error: response item {i} has neither b64_json nor url", file=sys.stderr)
-            sys.exit(1)
+def _emit_human(stats: BatchStats, files: list[Path], dims: dict[Path, tuple[int, int]]) -> None:
+    for path in files:
+        wh = dims.get(path)
+        suffix = f"  {wh[0]}x{wh[1]}" if wh else ""
+        print(f"{path}{suffix}")
+    print(format_summary(stats), file=sys.stderr)
 
-        if n == 1:
-            target = out_path
-        else:
-            stem = out_path.with_suffix("")
-            target = stem.parent / f"{stem.name}_{i}{out_path.suffix}"
-        target.write_bytes(raw)
-        written.append(target)
-    return written
+
+def _emit_json(cfg: EffectiveConfig, stats: BatchStats, dims: dict[Path, tuple[int, int]]) -> None:
+    payload: dict[str, Any] = {
+        "version": __version__,
+        "backend": cfg.backend,
+        "model": cfg.model,
+        "size": cfg.size,
+        "quality": cfg.quality,
+        "count": cfg.count,
+        "concurrency": cfg.concurrency,
+        "stats": stats.to_dict(),
+        "dimensions": {str(p): {"width": w, "height": h} for p, (w, h) in dims.items()},
+    }
+    json.dump(payload, sys.stdout, indent=2, sort_keys=True, default=str)
+    sys.stdout.write("\n")
 
 
 def main() -> int:
-    args = parse_args()
+    args = _build_parser().parse_args()
 
-    _load_env_chain()
-    if not os.environ.get("OPENAI_API_KEY"):
+    try:
+        cfg = _resolve_config(args)
+    except ValueError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
+
+    if args.show_config:
+        return _show_config(cfg, emit_json=args.emit_json)
+
+    if args.save_config:
+        try:
+            return _save_config(args, cfg)
+        except OSError as exc:
+            print(f"error: failed to write config: {exc}", file=sys.stderr)
+            return 1
+
+    if not args.prompt:
+        print("error: -p/--prompt is required (unless --show-config or --save-config)", file=sys.stderr)
+        return 2
+
+    try:
+        _validate(args, cfg)
+    except ValueError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
+
+    if not cfg.api_key:
         print(
-            "error: OPENAI_API_KEY not set. Add it to env / .env / ~/.env, or use your host agent's native image tool.",
+            "error: OPENAI_API_KEY not set. Add it to env / .env / ~/.env / config.ini, "
+            "use --api-key, or run your host agent's native image tool.",
             file=sys.stderr,
         )
         return 2
 
-    if args.mask and not args.image:
-        print("error: --mask requires --image (edits endpoint only)", file=sys.stderr)
-        return 2
+    cancel_event = threading.Event()
+    _install_sigint(cancel_event)
 
-    ext = args.output_format or "png"
-    out_path = Path(args.file).expanduser().resolve() if args.file else default_output_path(args.prompt, ext)
+    naming_ctx = NamingContext(
+        prompt=args.prompt,
+        extension=cfg.output_format,
+        count=cfg.count,
+        n=cfg.n,
+        output_dir=cfg.output_dir or None,
+    ).with_timestamp(make_timestamp())
 
-    client = OpenAI()  # auto-reads OPENAI_API_KEY
+    def task_fn(task_id: int, event: threading.Event) -> list[bytes]:
+        if event.is_set():
+            raise CancelledError("cancelled before request")
+        return call_backend(
+            prompt=args.prompt,
+            images=args.image,
+            mask=args.mask,
+            cfg=cfg,
+            cancel_event=event,
+        )
+
+    def write_fn(task_id: int, blobs: list[bytes]) -> list[Path]:
+        paths: list[Path] = []
+        for grid_index, blob in enumerate(blobs):
+            if args.file and cfg.count == 1:
+                target = explicit_output_path(args.file, cfg.n, grid_index)
+            else:
+                target = build_path(naming_ctx, task_id=task_id, grid_index=grid_index)
+            write_bytes(target, blob)
+            paths.append(target)
+        return paths
+
+    progress = not (args.quiet or args.no_progress or args.emit_json)
+    log_fn = (lambda _m: None) if (args.quiet or args.emit_json) else (lambda m: print(m, file=sys.stderr))
 
     try:
-        result = call_edit(client, args) if args.image else call_generate(client, args)
-    except APIError as e:
-        print(f"error: {type(e).__name__}: {e}", file=sys.stderr)
+        stats = run_batch(
+            count=cfg.count,
+            concurrency=cfg.concurrency,
+            task_fn=task_fn,
+            write_fn=write_fn,
+            cancel_event=cancel_event,
+            progress=progress,
+            log=log_fn,
+        )
+    except KeyboardInterrupt:
+        print("interrupted", file=sys.stderr)
+        return 130
+    except (BackendError, CancelledError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
         return 1
 
-    data = result.data or []
-    if not data:
-        print(f"error: no image data in response: {result}", file=sys.stderr)
-        return 1
+    files = list(all_files(stats))
+    dims: dict[Path, tuple[int, int]] = {}
+    for path in files:
+        wh = image_dimensions(path)
+        if wh:
+            dims[path] = wh
 
-    for p in write_outputs(data, out_path, args.n):
-        print(p)
+    if args.emit_json:
+        _emit_json(cfg, stats, dims)
+    else:
+        _emit_human(stats, files, dims)
+
+    if stats.success == 0:
+        return 1
     return 0
 
 

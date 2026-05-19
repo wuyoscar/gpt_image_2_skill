@@ -10,6 +10,12 @@ __pycache__/
 .env
 .env.local
 .env.*.local
+config.ini
+.gpt-image.ini
+
+# Generated outputs from batch mode
+output_images/
+fig/
 
 # Generated images (callers write outputs next to where they invoke the script)
 *.png

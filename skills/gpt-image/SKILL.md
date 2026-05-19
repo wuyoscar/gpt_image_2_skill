@@ -51,19 +51,34 @@ uvx --from git+https://github.com/wuyoscar/gpt_image_2_skill gpt-image -p "PROMP
 
 | Flag | Values | Use |
 |---|---|---|
-| `-p, --prompt` | string | Required prompt/edit instruction |
-| `-f, --file` | path | Output path; auto-named if omitted |
-| `-i, --image` | repeatable path | Use edits endpoint; supports multiple references |
-| `-m, --mask` | PNG path | Inpaint with alpha mask; requires `-i` |
+| `-p, --prompt` | string | Required (skipped only for `--show-config` / `--save-config`) |
+| `-f, --file` | path | Output path; auto-named if omitted. Valid only when `--count == 1`. |
+| `-i, --image` | repeatable path | Use edits endpoint; OpenAI backend takes many, responses backend at most one |
+| `-m, --mask` | PNG path | Inpaint with alpha mask; requires `-i`; OpenAI backend only |
 | `--model` | default `gpt-image-2` | Image model |
-| `--size` | `1k`, `2k`, `4k`, `portrait`, `landscape`, `square`, `wide`, `tall`, or literal | Canvas size |
+| `--size` | 22 presets or literal `WxH` | Canvas size (see size table) |
 | `--quality` | `low`, `medium`, `high`, `auto` | Cost/quality dial |
-| `-n, --n` | integer | Number of images |
+| `-n, --n` | integer | Images per API call (grid). Responses backend requires `n == 1`. |
 | `--background` | `auto`, `opaque` | Generation background |
-| `--moderation` | `auto`, `low` | Generation moderation setting |
+| `--moderation` | `auto`, `low` | Generations only |
+| `--input-fidelity` | `low`, `high` | Edits only. Dropped automatically for `gpt-image-2` |
 | `--format` | `png`, `jpeg`, `webp` | Output encoding |
-| `--compression` | `0-100` | JPEG/WebP compression |
+| `--compression` | `0-100` | JPEG/WebP compression (ignored for png) |
 | `--user` | string | Optional end-user identifier |
+| `--backend` | `openai` (default), `responses` | API backend; see "Batch generation and alternate backends" below |
+| `--base-url` | URL | Override the backend host (proxy / mirror) |
+| `--count` | integer | Total tasks; final image count = `--count × -n` |
+| `--concurrency` | integer | Parallel worker threads |
+| `--timeout` | seconds (default 600) | Per-request read timeout |
+| `--output-dir` | path | Batch output directory (defaults to `./output_images` for `count > 1`) |
+| `--config` | path | Load a config.ini (default: `./config.ini`, then `./.gpt-image.ini`) |
+| `--save-config` | flag | Persist effective config to `--config` path and exit |
+| `--save-api-key` | flag | When paired with `--save-config`, persists the key (plain text on disk) |
+| `--show-config` | flag | Print the effective config (api_key redacted) and exit |
+| `--api-key` | string | Explicit key — prefer env / `.env` / config to keep it out of shell history |
+| `--json` | flag | Machine-readable output for programmatic consumption |
+| `--quiet` | flag | Suppress per-task logs and the progress bar |
+| `--no-progress` | flag | Disable the progress bar but keep per-task logs |
 
 Quality policy:
 - `low`: cheap drafts, broad exploration, many variants.
@@ -77,6 +92,62 @@ Size policy:
 - print/paper figure: `2k`
 - widescreen hero: `4k`
 - vertical story/banner: `tall`
+
+Extended ladder (mirrors the bundled Tkinter UI; same `--size` flag):
+- 16:9 landscape — `1k-16:9` (1792×1008), `2k-16:9` (2048×1152), `2.5k-16:9` (2560×1440), `3k-16:9` (3072×1728), `4k-16:9` (3840×2160)
+- 9:16 portrait — `1k-9:16` (1008×1792), `2k-9:16` (1152×2048), `4k-9:16` (2160×3840)
+- 3:2 / 2:3 — `1k-3:2` (1536×1024), `1k-2:3` (1024×1536)
+- `auto` — let the model pick
+
+Custom `WxH` rules (validated locally before any API call): both sides multiples of 16, both in `[16, 8192]`, max/min ratio ≤ 3.
+
+## Batch generation and alternate backends
+
+When the user wants more than one image, set `--count` (number of tasks) and `--concurrency` (parallel workers). The runner writes a tqdm progress bar to stderr, accumulates success/failure stats, and exits with a one-line summary.
+
+```bash
+# 20 images, 4 parallel workers, machine-readable summary
+gpt-image -p "watermelon dancing" --count 20 --concurrency 4 --json
+
+# Cancel at any time with Ctrl+C; in-flight tasks finish or check the cancel flag
+```
+
+Two backends share the same flags:
+
+| Backend | Endpoint | Streaming | Multi-image (`-n > 1`) | Mask | Multiple `-i` |
+|---|---|---|---|---|---|
+| `openai` (default) | `/v1/images/generations` and `/v1/images/edits` via the openai SDK | no | yes | yes | yes |
+| `responses` | `/v1/responses` SSE; default host `https://www.codexapis.com` | yes (partial-image events) | no — one image per call | no | only one |
+
+Use `--backend responses` when the user wants the partial-image stream, when they're hitting a `codexapis.com`-compatible gateway, or when they're running the same loop the bundled Tkinter UI (`生图代码.py`) ships with. The CLI rejects incompatible flag combinations up front (e.g. `--backend responses` with `-n 2` or `-m`).
+
+`config.ini` persists every flag the user is likely to repeat. Look first at the project root:
+
+```bash
+gpt-image --show-config              # print the effective config (api_key redacted)
+gpt-image --save-config --size 4k-16:9 --quality high --backend openai
+                                     # write a project-local config.ini and exit
+```
+
+`--save-config` never writes the API key unless the user explicitly passes `--save-api-key`. Prefer env / `.env` / `~/.env` for the key — `--api-key` on the command line lands in shell history.
+
+`--json` emits a structured object:
+
+```json
+{
+  "version": "0.3.0",
+  "backend": "openai",
+  "model": "gpt-image-2",
+  "size": "1024x1024",
+  "quality": "high",
+  "count": 1,
+  "concurrency": 1,
+  "stats": {"total": 1, "success": 1, "fail": 0, ...},
+  "dimensions": {"<path>": {"width": 1024, "height": 1024}}
+}
+```
+
+Single-task ergonomics are unchanged: `gpt-image -p "..."` keeps writing one file with the legacy `YYYY-MM-DD-HH-MM-SS-<slug>.<ext>` name into `./fig/` (if present) or cwd.
 
 ## Endpoint routing
 

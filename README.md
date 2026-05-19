@@ -246,6 +246,33 @@ Under the hood: `POST /v1/images/edits` (multipart form), the official endpoint 
 | `--moderation` | `auto` · `low` | `low` | generations | `low` is the default here for broader prompt exploration; switch to `auto` if you want the stricter API-side default. |
 | `--format` | `png` · `jpeg` · `webp` | `png` | both | Response encoding. |
 | `--compression` | 0–100 | — | both | JPEG/WebP only. |
+| `--backend` | `openai` · `responses` | `openai` | both | Switch from the OpenAI SDK (`/v1/images/*`) to streaming SSE (`/v1/responses`). |
+| `--base-url` | URL | — | both | Override the backend host (proxies, mirrors). |
+| `--count` | int | 1 | both | Total tasks; final image count = `--count × -n`. |
+| `--concurrency` | int | 1 | both | Parallel worker threads. |
+| `--timeout` | seconds | 600 | both | Per-request read timeout (connect is fixed at 10s). |
+| `--output-dir` | path | auto | both | Batch output directory (defaults to `./output_images` for `count > 1`). |
+| `--config` | path | `./config.ini` then `./.gpt-image.ini` | both | Load persistent settings (mirrors the bundled Tkinter UI). |
+| `--save-config` | flag | — | both | Persist effective config to `--config` path and exit. |
+| `--save-api-key` | flag | — | both | Pair with `--save-config` to also persist the API key to disk. |
+| `--show-config` | flag | — | both | Print the effective config (key redacted) and exit. |
+| `--api-key` | string | — | both | Explicit key; prefer env / `.env` / config to keep it out of shell history. |
+| `--json` | flag | — | both | Emit a machine-readable JSON object on stdout for programmatic consumers. |
+| `--quiet` / `--no-progress` | flag | — | both | Suppress per-task logs / progress bar. |
+
+Extended size ladder (new in v0.3.0; mirrors the bundled Tkinter UI):
+
+| Preset | Resolution | Preset | Resolution |
+|---|---|---|---|
+| `1k-16:9` | 1792×1008 | `1k-9:16` | 1008×1792 |
+| `2k-16:9` | 2048×1152 | `2k-9:16` | 1152×2048 |
+| `2.5k-16:9` | 2560×1440 | `4k-9:16` | 2160×3840 |
+| `3k-16:9` | 3072×1728 | `1k-3:2` | 1536×1024 |
+| `4k-16:9` | 3840×2160 | `1k-2:3` | 1024×1536 |
+| `1k-square` | 1024×1024 | `2k-square` | 2048×2048 |
+| `auto` | model picks | | |
+
+Custom `WxH` strings are validated locally: both sides multiples of 16, both in `[16, 8192]`, max/min ratio ≤ 3.
 
 </details>
 
@@ -308,6 +335,92 @@ Distilled from OpenAI's [official GPT Image prompting guide](https://github.com/
 - [`skills/gpt-image/references/openai-cookbook.md`](skills/gpt-image/references/openai-cookbook.md) — verbatim Markdown capture of OpenAI's cookbook (1004 lines), including the authoritative parameter-coverage table and every §4 / §5 use-case example.
 
 </details>
+
+---
+
+## 🚀 Batch generation and alternate backends
+
+New in **v0.3.0**: every Tkinter-UI knob from the bundled `生图代码.py` script is now first-class on the CLI. Existing `gpt-image -p "…"` calls keep working unchanged — the new behaviour is opt-in via flags or a project-local `config.ini`.
+
+### Batch + concurrency
+
+```bash
+# 20 images, 4 parallel workers, machine-readable summary
+gpt-image -p "watermelon dancing" --count 20 --concurrency 4 --json
+
+# Same as above, human-friendly progress bar + per-task log
+gpt-image -p "watermelon dancing" --count 20 --concurrency 4
+```
+
+- **Total images** = `--count × -n` (count is tasks; `-n` is grid size per call).
+- **Progress** is rendered with `tqdm` on stderr; final summary line reports `OK / FAIL / CANCELLED / avg / total`.
+- **Cancellation**: `Ctrl+C` flips a shared cancel event. In-flight responses-backend SSE streams exit at the next event boundary; the OpenAI SDK path stops accepting new tasks but lets the in-flight call finish.
+- **File naming** in batch mode appends a zero-padded task id: `2026-05-19-10-00-00-prompt-slug_007.png`.
+
+### Backends
+
+```bash
+# Default: OpenAI SDK against /v1/images/* — multi-reference + mask + n>1 supported
+gpt-image -p "..." --backend openai
+
+# Streaming SSE: /v1/responses against codexapis.com (the bundled Tkinter UI's transport)
+gpt-image -p "..." --backend responses
+
+# Override the host (proxies, gateways, mirrors)
+gpt-image -p "..." --backend responses --base-url https://your-mirror.example
+```
+
+| Backend | Endpoint | Streaming | `-n > 1` | `-m` (mask) | Multiple `-i` |
+|---|---|---|---|---|---|
+| `openai` (default) | `/v1/images/generations`, `/v1/images/edits` | no | ✓ | ✓ | ✓ |
+| `responses` | `/v1/responses` SSE (default host `https://www.codexapis.com`) | ✓ | ✗ | ✗ | ✗ (single image) |
+
+Incompatible flag combinations are rejected up front so you do not pay for a doomed request.
+
+### Persistent config
+
+```bash
+# Inspect the resolved config (CLI > config.ini > env > defaults; api_key redacted)
+gpt-image --show-config
+
+# Write today's flags to ./config.ini and exit
+gpt-image --save-config --size 4k-16:9 --quality high --backend openai --count 10
+
+# Reuse it on the next call
+gpt-image -p "studio shot of a vinyl record"
+```
+
+`config.ini` lives at `./config.ini` by default (matches the bundled Tkinter UI). `--save-config` never persists the API key unless you also pass `--save-api-key` — env vars / `.env` / `~/.env` remain the recommended path. The CLI loads `OPENAI_API_KEY` from process env, then `./.env`, then `~/.env` without overriding existing env.
+
+### JSON output
+
+`--json` swaps the human log for a machine-readable object that any skill or pipeline can consume:
+
+```json
+{
+  "version": "0.3.0",
+  "backend": "openai",
+  "model": "gpt-image-2",
+  "size": "1024x1024",
+  "quality": "high",
+  "count": 1,
+  "concurrency": 1,
+  "stats": {
+    "total": 1,
+    "success": 1,
+    "fail": 0,
+    "cancelled": 0,
+    "total_elapsed_seconds": 4.21,
+    "average_success_seconds": 4.21,
+    "tasks": [{"task_id": 1, "status": "ok", "elapsed_seconds": 4.21, "files": [".../poster.png"], "error": ""}]
+  },
+  "dimensions": {".../poster.png": {"width": 1024, "height": 1024}}
+}
+```
+
+### Lineage
+
+The flag set and `config.ini` schema in this release are a direct port of an internal Tkinter stress-test panel that originally drove the `codexapis.com /v1/responses` integration. The panel has been removed from this repo now that the CLI covers every knob it exposed (same SSE transport, same size table, same `[settings]` schema, same batch + concurrency loop).
 
 ---
 

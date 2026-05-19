@@ -246,6 +246,33 @@ gpt-image -p "将天空替换为极光" \
 | `--moderation` | `auto` · `low` | `low` | 生成 | 这里默认用 `low`，更适合广泛探索提示词；如果你想回到更严格的 API 侧默认行为，就手动切到 `auto`。 |
 | `--format` | `png` · `jpeg` · `webp` | `png` | 两者 | 响应编码格式。 |
 | `--compression` | 0–100 | — | 两者 | 仅适用于 JPEG/WebP。 |
+| `--backend` | `openai` · `responses` | `openai` | 两者 | 切换调用通道：OpenAI SDK（`/v1/images/*`）或 SSE 流式（`/v1/responses`）。 |
+| `--base-url` | URL | — | 两者 | 覆盖后端 host（代理、镜像）。 |
+| `--count` | 整数 | 1 | 两者 | 总任务数；最终图片数 = `--count × -n`。 |
+| `--concurrency` | 整数 | 1 | 两者 | 并发 worker 线程数。 |
+| `--timeout` | 秒 | 600 | 两者 | 每次请求的读超时（连接超时固定为 10 秒）。 |
+| `--output-dir` | 路径 | 自动 | 两者 | 批量输出目录（`count > 1` 时默认 `./output_images`）。 |
+| `--config` | 路径 | 依次查 `./config.ini`、`./.gpt-image.ini` | 两者 | 加载持久化设置（与 Tkinter UI 共用同一份 ini）。 |
+| `--save-config` | flag | — | 两者 | 将当前生效配置写回 `--config` 并退出。 |
+| `--save-api-key` | flag | — | 两者 | 与 `--save-config` 同用时，把 API key 也写入文件（明文）。 |
+| `--show-config` | flag | — | 两者 | 打印生效配置（API key 脱敏后）并退出。 |
+| `--api-key` | 字符串 | — | 两者 | 显式 key；推荐用 env / `.env` / config 避免落入 shell history。 |
+| `--json` | flag | — | 两者 | 切换为机器可读 JSON 输出，便于 skill / 流水线消费。 |
+| `--quiet` / `--no-progress` | flag | — | 两者 | 抑制逐任务日志 / 进度条。 |
+
+扩展尺寸表（v0.3.0 新增；与 `生图代码.py` Tkinter UI 同款）：
+
+| 预设 | 分辨率 | 预设 | 分辨率 |
+|---|---|---|---|
+| `1k-16:9` | 1792×1008 | `1k-9:16` | 1008×1792 |
+| `2k-16:9` | 2048×1152 | `2k-9:16` | 1152×2048 |
+| `2.5k-16:9` | 2560×1440 | `4k-9:16` | 2160×3840 |
+| `3k-16:9` | 3072×1728 | `1k-3:2` | 1536×1024 |
+| `4k-16:9` | 3840×2160 | `1k-2:3` | 1024×1536 |
+| `1k-square` | 1024×1024 | `2k-square` | 2048×2048 |
+| `auto` | 模型自动选择 | | |
+
+自定义 `WxH` 在本地校验：两边都是 16 的倍数、均在 `[16, 8192]`、长短边之比 ≤ 3。
 
 </details>
 
@@ -308,6 +335,92 @@ result = client.images.generate(
 - [`skills/gpt-image/references/openai-cookbook.md`](skills/gpt-image/references/openai-cookbook.md) — OpenAI Cookbook 的逐字 Markdown 捕获（1004 行），包括权威的参数覆盖表和所有第4/5节用例示例。
 
 </details>
+
+---
+
+## 🚀 批量生成与备用后端
+
+**v0.3.0** 起，根目录 `生图代码.py`（Tkinter 压测面板）的所有横向能力都正式并入 CLI；老的 `gpt-image -p "…"` 调用 100% 兼容，新能力全部是可选 flag 或项目本地的 `config.ini`。
+
+### 批量 + 并发
+
+```bash
+# 20 张图，4 路并发，机器可读统计输出
+gpt-image -p "西瓜在跳舞" --count 20 --concurrency 4 --json
+
+# 同上但展示进度条与逐任务日志
+gpt-image -p "西瓜在跳舞" --count 20 --concurrency 4
+```
+
+- **总图片数** = `--count × -n`（count 是任务数，`-n` 是单次 API 的 grid 大小）。
+- **进度**用 `tqdm` 打到 stderr；结束打印 `OK / FAIL / CANCELLED / 平均 / 总耗时`。
+- **取消**：`Ctrl+C` 触发共享 cancel event；responses 后端在下一条 SSE 行检查到后立刻退出，OpenAI SDK 后端不再派发新任务但会等正在执行的请求结束。
+- **文件命名**在批量模式自动追加 task id：`2026-05-19-10-00-00-prompt-slug_007.png`。
+
+### 双后端
+
+```bash
+# 默认：OpenAI SDK，支持多参考图、mask、n>1
+gpt-image -p "..." --backend openai
+
+# SSE 流式：/v1/responses，默认指向 codexapis.com（与 Tkinter 面板同款）
+gpt-image -p "..." --backend responses
+
+# 覆盖 host（代理 / 网关 / 镜像）
+gpt-image -p "..." --backend responses --base-url https://your-mirror.example
+```
+
+| 后端 | 端点 | 流式 | `-n > 1` | `-m` mask | 多个 `-i` |
+|---|---|---|---|---|---|
+| `openai`（默认） | `/v1/images/generations`、`/v1/images/edits` | 否 | ✓ | ✓ | ✓ |
+| `responses` | `/v1/responses` SSE（默认 host `https://www.codexapis.com`） | ✓ | ✗ | ✗ | ✗（单图） |
+
+CLI 会在网络请求前主动拒绝不兼容的 flag 组合，避免白白计费。
+
+### 持久化配置
+
+```bash
+# 查看合并后的生效配置（CLI > config.ini > env > 默认；api_key 脱敏）
+gpt-image --show-config
+
+# 把当前 flag 写到 ./config.ini 后退出
+gpt-image --save-config --size 4k-16:9 --quality high --backend openai --count 10
+
+# 下次直接复用
+gpt-image -p "studio shot of a vinyl record"
+```
+
+`config.ini` 默认在项目根目录（与 Tkinter UI 完全兼容）。`--save-config` **不会**写入 API key，除非显式加 `--save-api-key`；推荐继续用 env / `.env` / `~/.env` 维护密钥。CLI 加载顺序：进程 env → `./.env` → `~/.env`，已有 env 不会被覆盖。
+
+### JSON 输出
+
+`--json` 把人类日志换成机器可读对象，skill 或者流水线直接消费：
+
+```json
+{
+  "version": "0.3.0",
+  "backend": "openai",
+  "model": "gpt-image-2",
+  "size": "1024x1024",
+  "quality": "high",
+  "count": 1,
+  "concurrency": 1,
+  "stats": {
+    "total": 1,
+    "success": 1,
+    "fail": 0,
+    "cancelled": 0,
+    "total_elapsed_seconds": 4.21,
+    "average_success_seconds": 4.21,
+    "tasks": [{"task_id": 1, "status": "ok", "elapsed_seconds": 4.21, "files": [".../poster.png"], "error": ""}]
+  },
+  "dimensions": {".../poster.png": {"width": 1024, "height": 1024}}
+}
+```
+
+### 背景
+
+本次发布的 flag 集合与 `config.ini` schema 直接移植自一份内部 Tkinter 压测面板，它最初打通了 `codexapis.com /v1/responses` 通道。该面板已从仓库中移除，因为 CLI 现在覆盖了它所有的能力（同一份 SSE 通道、同一份尺寸表、同一份 `[settings]` schema、同一套批量并发循环）。
 
 ---
 
