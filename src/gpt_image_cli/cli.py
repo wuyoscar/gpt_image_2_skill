@@ -57,6 +57,8 @@ from typing import Any
 from dotenv import load_dotenv
 from openai import APIError, OpenAI
 
+from .sizes import resolve_size
+
 
 def _load_env_chain() -> None:
     """Resolve OPENAI_API_KEY without overriding runtime-provided env.
@@ -67,17 +69,6 @@ def _load_env_chain() -> None:
     load_dotenv(Path.cwd() / ".env", override=False)
     load_dotenv(Path.home() / ".env", override=False)
 
-
-SIZE_SHORTCUTS: dict[str, str] = {
-    "1k": "1024x1024",
-    "2k": "2048x2048",
-    "4k": "3840x2160",
-    "portrait": "1024x1536",
-    "landscape": "1536x1024",
-    "square": "1024x1024",
-    "wide": "2048x1152",
-    "tall": "2160x3840",
-}
 
 DEFAULT_MODEL = "gpt-image-2"
 DEFAULT_SIZE = "1024x1024"
@@ -95,10 +86,6 @@ def default_output_path(prompt: str, extension: str) -> Path:
     target_dir = cwd / "fig" if (cwd / "fig").is_dir() else cwd
     stamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
     return target_dir / f"{stamp}-{slugify(prompt)}.{extension}"
-
-
-def resolve_size(value: str) -> str:
-    return SIZE_SHORTCUTS.get(value.lower(), value)
 
 
 def model_rejects_input_fidelity(model: str) -> bool:
@@ -130,9 +117,11 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--model", default=DEFAULT_MODEL, help=f"Model ID (default {DEFAULT_MODEL}).")
     p.add_argument(
         "--size", default=DEFAULT_SIZE,
-        help="Image size. Accepts literals (1024x1024, 1536x1024, 2048x2048, 3840x2160, "
-             "any 16px-multiple up to 3840 max edge, 3:1 ratio cap) or shortcuts "
-             "(1k, 2k, 4k, portrait, landscape, square, wide, tall). Default 1024x1024.",
+        help="Image size. Shortcuts: 1k, 2k, 4k, portrait, landscape, square, wide, tall, "
+             "1k-square, 2k-square, 1k-16:9, 2k-16:9, 2.5k-16:9, 3k-16:9, 4k-16:9, "
+             "1k-9:16, 2k-9:16, 4k-9:16, 1k-3:2, 1k-2:3, auto. "
+             "Custom WxH must have both sides as multiples of 16, in [16, 8192], "
+             "with max/min aspect ratio ≤ 3. Default 1024x1024.",
     )
     p.add_argument(
         "--quality", default="high", choices=["auto", "low", "medium", "high"],
@@ -177,7 +166,7 @@ def call_generate(client: OpenAI, args: argparse.Namespace) -> Any:
     return client.images.generate(**_filter_none({
         "model": args.model,
         "prompt": args.prompt,
-        "size": resolve_size(args.size),
+        "size": args.size,
         "quality": args.quality,
         "n": args.n,
         "background": args.background,
@@ -213,7 +202,7 @@ def call_edit(client: OpenAI, args: argparse.Namespace) -> Any:
             "image": image_handles,
             "mask": mask_handle,
             "prompt": args.prompt,
-            "size": resolve_size(args.size),
+            "size": args.size,
             "quality": args.quality,
             "n": args.n,
             "background": args.background,
@@ -256,6 +245,12 @@ def write_outputs(data: list[Any], out_path: Path, n: int) -> list[Path]:
 
 def main() -> int:
     args = parse_args()
+
+    try:
+        args.size = resolve_size(args.size)
+    except ValueError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 2
 
     _load_env_chain()
     if not os.environ.get("OPENAI_API_KEY"):

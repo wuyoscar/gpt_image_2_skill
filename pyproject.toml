@@ -44,6 +44,11 @@ dependencies = [
   "python-dotenv>=1.0",
 ]
 
+[project.optional-dependencies]
+dev = [
+  "pytest>=7",
+]
+
 [project.urls]
 Homepage = "https://github.com/wuyoscar/gpt_image_2_skill"
 Repository = "https://github.com/wuyoscar/gpt_image_2_skill"
