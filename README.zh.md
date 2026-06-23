@@ -24,6 +24,19 @@
 
 ---
 
+<p align="center">
+  <a href="https://www.atlascloud.ai/?utm_source=github&utm_medium=link&utm_campaign=gpt_image_2_skill">
+    <img src="docs/assets/atlas-cloud-logo.png" alt="Atlas Cloud" width="200">
+  </a>
+</p>
+
+> 🎁 **[Atlas Cloud](https://www.atlascloud.ai/?utm_source=github&utm_medium=link&utm_campaign=gpt_image_2_skill)** 提供了本 Skill 所围绕的同一个 **GPT Image 2** 模型，以及 Seedream、Nano Banana、FLUX、Imagen、Qwen-Image、Wan 等众多模型，统一通过一套全模态媒体 API 调用。如果你不想直接使用 OpenAI Key，本 CLI 内置了 **`--backend atlas`**，可把 `gpt-image-2` 通过 Atlas Cloud 调用。完整模型列表：[atlascloud.ai/models](https://www.atlascloud.ai/models)。
+>
+> ```bash
+> export ATLASCLOUD_API_KEY=<你的-atlascloud-api-key>
+> gpt-image --backend atlas -p "a cat astronaut on the moon" --size 1k -f cat.png
+> ```
+
 ## ✨ 一眼看懂
 
 <table border="1" cellspacing="0" cellpadding="6">
@@ -189,6 +202,33 @@ uv tool upgrade gpt-image-cli
 </details>
 
 按 process env、`.env`、`~/.env` 的顺序读取 `OPENAI_API_KEY`，且不会覆盖已经设置好的环境变量。
+
+<details>
+<summary><strong>用 Atlas Cloud 替代 OpenAI（<code>--backend atlas</code>）</strong></summary>
+
+[Atlas Cloud](https://www.atlascloud.ai/?utm_source=github&utm_medium=link&utm_campaign=gpt_image_2_skill) 是一个全模态 AI 推理平台，通过一套 API 即可调用 **GPT Image 2**（以及众多其他图像 / 视频 / LLM 模型）。本 CLI 可以把同一个 `gpt-image-2` 模型改走 Atlas，而不是直接调用 OpenAI：
+
+```bash
+export ATLASCLOUD_API_KEY=<你的-atlascloud-api-key>
+
+# 单次使用
+gpt-image --backend atlas -p "a cat astronaut on the moon" --size 1k -f cat.png
+
+# 或在当前会话里设为默认
+export GPT_IMAGE_BACKEND=atlas
+gpt-image -p "中国风茶饮海报" --size portrait -f poster.png
+
+# 通过 Atlas 做参考图编辑
+gpt-image --backend atlas -p "给这页漫画上色" -i page.jpg -f colored.png
+```
+
+说明：
+
+- Atlas 通过**异步**媒体 API（提交任务 → 轮询结果）提供 GPT Image 2，因此 `--backend atlas` 会自动处理提交与轮询，并和 OpenAI 路径一样把生成的图片写到磁盘。
+- CLI 的 `gpt-image-2` 会映射到 `openai/gpt-image-2/text-to-image`（文生图）与 `openai/gpt-image-2/edit`（编辑）。你也可以给 `--model` 传完整的 Atlas 模型 ID（例如 `--model openai/gpt-image-2/text-to-image`）。
+- 默认后端仍为 `openai`，不主动开启就不会有任何变化。
+
+</details>
 
 > **Agent 与 API Key 提醒。** 我们发现 Codex 其实自带生成 Image 的 skill，但它是黑盒的，无法在这里修改；Codex 用户如果更想走内置能力，可以自行切换。也感谢相关 issue 里提到的方法：如果你不想让 agent accidentally 调用你的 OpenAI API Key，直接在调用本地 CLI/Skill 前运行 `unset OPENAI_API_KEY` 即可。
 

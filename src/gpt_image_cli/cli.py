@@ -129,6 +129,13 @@ def parse_args() -> argparse.Namespace:
     )
     p.add_argument("--model", default=DEFAULT_MODEL, help=f"Model ID (default {DEFAULT_MODEL}).")
     p.add_argument(
+        "--backend", default=os.environ.get("GPT_IMAGE_BACKEND", "openai"),
+        choices=["openai", "atlas"],
+        help="Image backend. `openai` (default) calls OpenAI directly. `atlas` routes the same "
+             "gpt-image-2 model through Atlas Cloud's async media API (needs ATLASCLOUD_API_KEY). "
+             "Defaults to the GPT_IMAGE_BACKEND env var when set.",
+    )
+    p.add_argument(
         "--size", default=DEFAULT_SIZE,
         help="Image size. Accepts literals (1024x1024, 1536x1024, 2048x2048, 3840x2160, "
              "any 16px-multiple up to 3840 max edge, 3:1 ratio cap) or shortcuts "
@@ -254,16 +261,33 @@ def write_outputs(data: list[Any], out_path: Path, n: int) -> list[Path]:
     return written
 
 
+def _run_atlas(args: argparse.Namespace) -> Any:
+    """Route generation/edit through Atlas Cloud's async media API."""
+    from . import atlas_backend
+
+    api_key = atlas_backend.atlas_api_key()
+    if not api_key:
+        print(
+            "error: --backend atlas needs ATLASCLOUD_API_KEY (get one at "
+            "https://www.atlascloud.ai). Add it to env / .env / ~/.env.",
+            file=sys.stderr,
+        )
+        sys.exit(2)
+    size = resolve_size(args.size)
+    if args.image:
+        return atlas_backend.edit(
+            api_key=api_key, model=args.model, prompt=args.prompt,
+            size=size, n=args.n, images=list(args.image),
+        )
+    return atlas_backend.generate(
+        api_key=api_key, model=args.model, prompt=args.prompt, size=size, n=args.n,
+    )
+
+
 def main() -> int:
     args = parse_args()
 
     _load_env_chain()
-    if not os.environ.get("OPENAI_API_KEY"):
-        print(
-            "error: OPENAI_API_KEY not set. Add it to env / .env / ~/.env, or use your host agent's native image tool.",
-            file=sys.stderr,
-        )
-        return 2
 
     if args.mask and not args.image:
         print("error: --mask requires --image (edits endpoint only)", file=sys.stderr)
@@ -272,13 +296,26 @@ def main() -> int:
     ext = args.output_format or "png"
     out_path = Path(args.file).expanduser().resolve() if args.file else default_output_path(args.prompt, ext)
 
-    client = OpenAI()  # auto-reads OPENAI_API_KEY
-
-    try:
-        result = call_edit(client, args) if args.image else call_generate(client, args)
-    except APIError as e:
-        print(f"error: {type(e).__name__}: {e}", file=sys.stderr)
-        return 1
+    if args.backend == "atlas":
+        from .atlas_backend import AtlasError
+        try:
+            result = _run_atlas(args)
+        except AtlasError as e:
+            print(f"error: AtlasError: {e}", file=sys.stderr)
+            return 1
+    else:
+        if not os.environ.get("OPENAI_API_KEY"):
+            print(
+                "error: OPENAI_API_KEY not set. Add it to env / .env / ~/.env, or use your host agent's native image tool.",
+                file=sys.stderr,
+            )
+            return 2
+        client = OpenAI()  # auto-reads OPENAI_API_KEY
+        try:
+            result = call_edit(client, args) if args.image else call_generate(client, args)
+        except APIError as e:
+            print(f"error: {type(e).__name__}: {e}", file=sys.stderr)
+            return 1
 
     data = result.data or []
     if not data:

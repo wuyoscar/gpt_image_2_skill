@@ -24,6 +24,19 @@
 
 ---
 
+<p align="center">
+  <a href="https://www.atlascloud.ai/?utm_source=github&utm_medium=link&utm_campaign=gpt_image_2_skill">
+    <img src="docs/assets/atlas-cloud-logo.png" alt="Atlas Cloud" width="200">
+  </a>
+</p>
+
+> 🎁 **[Atlas Cloud](https://www.atlascloud.ai/?utm_source=github&utm_medium=link&utm_campaign=gpt_image_2_skill)** serves the same **GPT Image 2** model this skill is built around — plus Seedream, Nano Banana, FLUX, Imagen, Qwen-Image, Wan and many more — through one full-modal media API. If you'd rather not use an OpenAI key directly, this CLI ships a built-in **`--backend atlas`** that routes `gpt-image-2` through Atlas Cloud. Full model list: [atlascloud.ai/models](https://www.atlascloud.ai/models).
+>
+> ```bash
+> export ATLASCLOUD_API_KEY=<your-atlascloud-api-key>
+> gpt-image --backend atlas -p "a cat astronaut on the moon" --size 1k -f cat.png
+> ```
+
 ## ✨ At a glance
 
 <table border="1" cellspacing="0" cellpadding="6">
@@ -189,6 +202,33 @@ uv tool upgrade gpt-image-cli
 </details>
 
 Reads `OPENAI_API_KEY` from process env, then `.env`, then `~/.env` without overriding an already-set env var.
+
+<details>
+<summary><strong>Use Atlas Cloud instead of OpenAI (<code>--backend atlas</code>)</strong></summary>
+
+[Atlas Cloud](https://www.atlascloud.ai/?utm_source=github&utm_medium=link&utm_campaign=gpt_image_2_skill) is a full-modal AI inference platform that serves **GPT Image 2** (and many other image / video / LLM models) through a single API. The CLI can route the same `gpt-image-2` model through Atlas instead of calling OpenAI directly:
+
+```bash
+export ATLASCLOUD_API_KEY=<your-atlascloud-api-key>
+
+# one-off flag
+gpt-image --backend atlas -p "a cat astronaut on the moon" --size 1k -f cat.png
+
+# or make it the default for the session
+export GPT_IMAGE_BACKEND=atlas
+gpt-image -p "Chinese tea poster" --size portrait -f poster.png
+
+# reference-image edit through Atlas
+gpt-image --backend atlas -p "colorize this manga page" -i page.jpg -f colored.png
+```
+
+Notes:
+
+- Atlas serves GPT Image 2 via an **asynchronous** media API (submit task → poll result), so `--backend atlas` handles submission and polling for you and writes the resulting image exactly like the OpenAI path.
+- The CLI's `gpt-image-2` maps to `openai/gpt-image-2/text-to-image` (generate) and `openai/gpt-image-2/edit` (edit). You can also pass a full Atlas model id to `--model` (e.g. `--model openai/gpt-image-2/text-to-image`).
+- Default backend stays `openai`; nothing changes unless you opt in.
+
+</details>
 
 > **Agent + API-key note.** Codex also has its own built-in image-generation skill, but that path is black-box and cannot be edited here; Codex users can switch to it if they prefer. Thanks to the related issue discussion for the simple safety tip: if you do not want an agent to accidentally use your OpenAI API key, run `unset OPENAI_API_KEY` before invoking the local CLI/skill.
 
