@@ -198,7 +198,7 @@ uv tool upgrade gpt-image-cli
 
 </details>
 
-Reads `OPENAI_API_KEY` from process env, then `.env`, then `~/.env` without overriding an already-set env var.
+Reads `OPENAI_API_KEY` from process env, then `.env`, then `~/.env` without overriding an already-set env var. The optional Atlas Cloud text-to-image path reads `ATLASCLOUD_API_KEY` or `ATLAS_CLOUD_API_KEY`.
 
 > **Agent + API-key note.** Codex also has its own built-in image-generation skill, but that path is black-box and cannot be edited here; Codex users can switch to it if they prefer. Thanks to the related issue discussion for the simple safety tip: if you do not want an agent to accidentally use your OpenAI API key, run `unset OPENAI_API_KEY` before invoking the local CLI/skill.
 
@@ -218,6 +218,16 @@ gpt-image -p "a photorealistic convenience store at 10pm" --size 1k --quality hi
 ```
 
 Under the hood: `POST /v1/images/generations` with `model=gpt-image-2`.
+
+### Atlas Cloud text → image
+
+```bash
+export ATLASCLOUD_API_KEY="your-atlascloud-api-key"
+gpt-image --provider atlascloud -p "a photorealistic convenience store at 10pm" \
+  --size 1k --quality high -f store.png
+```
+
+Under the hood: `POST /api/v1/model/generateImage` with `model=openai/gpt-image-2/text-to-image`, followed by prediction polling. The Atlas Cloud provider currently covers text-to-image generation only; reference edits and inpainting still use the OpenAI provider.
 
 ### Text + reference image → image (edit)
 
@@ -245,6 +255,8 @@ Under the hood: `POST /v1/images/edits` (multipart form), the official endpoint 
 | Flag | Values | Default | Applies to | Notes |
 |---|---|---|---|---|
 | `-p, --prompt` | str | — required | both | Full prompt text. |
+| `--provider` | `openai` · `atlascloud` | `openai` | generation | `atlascloud` uses Atlas Cloud's async text-to-image API and reads `ATLASCLOUD_API_KEY`. |
+| `--model` | str | `gpt-image-2` | both | With `--provider atlascloud`, the default maps to `openai/gpt-image-2/text-to-image`. |
 | `-f, --file` | path | `./fig/YYYY-MM-DD-HH-MM-SS-<slug>.png` | both | Explicit output path. |
 | `-i, --image` | path (repeatable) | — | edits | Presence routes through `/v1/images/edits`. |
 | `-m, --mask` | path (PNG, alpha) | — | edits | Opaque = preserved, transparent = regenerated. Requires `-i`. |

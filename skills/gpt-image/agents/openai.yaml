@@ -1,4 +1,4 @@
 interface:
   display_name: "GPT Image"
-  short_description: "Generate/edit GPT Image 2 visuals through the packaged CLI"
+  short_description: "Generate/edit GPT Image 2 visuals through the packaged CLI, with optional Atlas Cloud text-to-image"
   default_prompt: "Use $gpt-image to analyze my image request, search the Reference Gallery/craft files, confer on the best direction if needed, then call the packaged gpt-image CLI. Do not write a new image-generation script unless asked to modify this repo."
