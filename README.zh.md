@@ -149,6 +149,30 @@ npx --yes skills@latest add wuyoscar/gpt_image_2_skill \
 </details>
 
 <details>
+<summary><strong>Autohand Code</strong></summary>
+
+Autohand Code 会从 `~/.autohand/skills/` 读取全局 skill，也会从 `<project>/.autohand/skills/` 读取当前项目的 skill。这个 skill 目前还没有收录在 Autohand catalog 中，因此请直接软链接 skill 文件夹：
+
+```bash
+git clone https://github.com/wuyoscar/gpt_image_2_skill.git
+cd gpt_image_2_skill
+
+# 全局安装
+mkdir -p ~/.autohand/skills/
+test -e ~/.autohand/skills/gpt-image && echo "gpt-image skill already exists; stop before overwriting" && exit 1
+ln -s "$PWD/skills/gpt-image" ~/.autohand/skills/gpt-image
+
+# 或项目级安装
+mkdir -p .autohand/skills/
+test -e .autohand/skills/gpt-image && echo "gpt-image skill already exists; stop before overwriting" && exit 1
+ln -s "$PWD/skills/gpt-image" .autohand/skills/gpt-image
+```
+
+Autohand Code 也支持通过 `autohand --skill-install` 安装已收录在 Autohand catalog 中的 skill，并可通过 `--project` 安装到当前项目。在这个 skill 收录前，请使用上面的直接软链接方式。
+
+</details>
+
+<details>
 <summary><strong>手动安装 Agent Skill</strong></summary>
 
 把 `AGENT_SKILLS_DIR` 设置为你的 Agent 运行时所使用的 skills 目录，然后把本仓库的 skill 文件夹软链接进去。
@@ -160,6 +184,7 @@ cd gpt_image_2_skill
 # 选择你的运行时对应的 skills 目录。
 # 示例：
 #   Codex:      ~/.codex/skills
+#   Autohand:   ~/.autohand/skills 或 <project>/.autohand/skills
 #   Claude Code / OpenClaw / Hermes Agent / 其他运行时：使用该运行时文档指定的 skills 目录。
 export AGENT_SKILLS_DIR="/path/to/your/agent/skills"
 

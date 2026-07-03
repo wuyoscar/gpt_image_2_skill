@@ -149,6 +149,30 @@ If your runtime is not listed by `skills@latest` yet, use the manual Agent Skill
 </details>
 
 <details>
+<summary><strong>Autohand Code</strong></summary>
+
+Autohand Code reads global skills from `~/.autohand/skills/` and project skills from `<project>/.autohand/skills/`. This skill is not currently listed in the Autohand catalog, so install it by linking the skill folder:
+
+```bash
+git clone https://github.com/wuyoscar/gpt_image_2_skill.git
+cd gpt_image_2_skill
+
+# Global install
+mkdir -p ~/.autohand/skills/
+test -e ~/.autohand/skills/gpt-image && echo "gpt-image skill already exists; stop before overwriting" && exit 1
+ln -s "$PWD/skills/gpt-image" ~/.autohand/skills/gpt-image
+
+# Or project-level install
+mkdir -p .autohand/skills/
+test -e .autohand/skills/gpt-image && echo "gpt-image skill already exists; stop before overwriting" && exit 1
+ln -s "$PWD/skills/gpt-image" .autohand/skills/gpt-image
+```
+
+Autohand Code also supports `autohand --skill-install` for cataloged skills, with `--project` for workspace-level installs. Until this skill is listed there, use the direct link path above.
+
+</details>
+
+<details>
 <summary><strong>Manual agent-skill install</strong></summary>
 
 Set `AGENT_SKILLS_DIR` to the skills directory used by your agent runtime, then symlink this repo's skill folder into it.
@@ -160,6 +184,7 @@ cd gpt_image_2_skill
 # Choose the skill directory for your runtime.
 # Examples:
 #   Codex:      ~/.codex/skills
+#   Autohand:   ~/.autohand/skills or <project>/.autohand/skills
 #   Claude Code / OpenClaw / Hermes Agent / other runtimes: use that runtime's documented skills directory.
 export AGENT_SKILLS_DIR="/path/to/your/agent/skills"
 
