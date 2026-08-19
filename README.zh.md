@@ -2865,8 +2865,8 @@ Create a dark surrealist tattoo design sheet in portrait format. Subject: a gian
 ## ⭐ Star History
 
 <p align="center">
-  <a href="https://www.star-history.com/#wuyoscar/gpt_image_2_skill&Date">
-    <img src="https://api.star-history.com/svg?repos=wuyoscar/gpt_image_2_skill&type=Date" alt="Star History Chart" width="100%"/>
+  <a href="https://star-history.dera.page/#wuyoscar/gpt_image_2_skill&Date">
+    <img src="https://star-history.dera.page/svg?repos=wuyoscar/gpt_image_2_skill&type=Date" alt="Star History Chart" width="100%"/>
   </a>
 </p>
 
