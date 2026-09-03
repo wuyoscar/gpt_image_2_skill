@@ -1,0 +1,4 @@
+interface:
+  display_name: "图片反推提示词"
+  short_description: "从参考图片反推可直接使用的高还原度中英双语生图提示词"
+  default_prompt: "Use $image-prompt-reverse to analyze my uploaded image and produce a high-fidelity positive prompt and negative prompt."
