@@ -331,6 +331,41 @@ Distilled from OpenAI's [official GPT Image prompting guide](https://github.com/
 
 ---
 
+## 🔁 Image-to-prompt reverse-engineering example
+
+This example demonstrates the proposed two-stage workflow: analyze a reference image with the `image-prompt-reverse` skill, then use the resulting prompt with GPT Image 2 to generate a new image.
+
+<table>
+  <tr>
+    <td width="50%" align="center" valign="top">
+      <img src="docs/illustration/image-prompt-reverse-reference.jpg" width="100%" alt="Contributor-provided snowy urban alley reference image"/>
+      <sub>Reference image · Contributor-provided</sub>
+    </td>
+    <td width="50%" align="center" valign="top">
+      <img src="docs/illustration/image-prompt-reverse-result.png" width="100%" alt="ImageGen result generated from the reverse-engineered prompt"/>
+      <sub>Generated result · ImageGen output</sub>
+    </td>
+  </tr>
+</table>
+
+<details>
+<summary><strong>📝 Reverse-engineered prompt</strong></summary>
+
+**Positive Prompt**
+
+~~~text
+A highly polished semi-realistic Japanese narrative illustration rendered in a painterly digital style, using varied brush widths, a combination of hard edges and soft transitions, restrained contour lines, and controlled surface texture. The image should feel like a cold cinematic game-concept artwork. Use a wide 16:9 composition with strong depth in a snowy urban alley, where the snow-covered road narrows toward a distant vanishing point near the center. Place a large fluffy dark blue-gray wolfdog in the left foreground, shown in side profile facing right with its head raised, interacting with a hooded young woman kneeling near the center-right. She crouches in the snow facing left, gently touching the wolfdog’s muzzle or forehead with one gloved hand while the other rests near her knee for balance, creating a restrained and intimate gesture. She wears an oversized pale-gray winter hooded jacket with pointed ear-like details on top, dark gray panels, pockets, straps, and small muted red-orange accents, over black clothing, fitted black pants, and heavy dark boots. Short black or deep-brown hair falls from beneath the hood; her face is partly shadowed as she looks down at the wolfdog with a quiet, tired, yet gentle expression. Render the wolfdog’s fur with layered directional brushstrokes, making the back, neck, and tail thick and voluminous, with cool blue-gray shadows, pale highlights, and a subtle rim light along the silhouette. On the left, include metal fencing, utility boxes, and dense dark shrubs; in the distance, show tall urban buildings, street lamps, utility poles, and a blue-gray sky. On the right, include dark building facades, windows, snow-covered roof edges, evergreen branches, and foreground cardboard boxes and industrial clutter. Any environmental labels should remain blurred graphic marks with no readable text. Let the main light enter from the distant upper-left side of the alley, combining cold blue ambient shadows with warm golden reflections in the distance. Add subtle rim light to the snow, the woman, and the wolfdog, with medium-high contrast and warm orange clothing details acting as focal accents. Snow, slush, and shallow puddles in the foreground should show damp reflections. Use atmospheric perspective to soften distant buildings while keeping the woman and wolfdog clear. Establish depth through foreground, middle ground, background, occlusion, and perspective lines rather than strong blur. The mood is loneliness, trust, and a brief moment of tenderness in a frozen city. Preserve rough painterly strokes, cool-warm contrast, cinematic composition, and refined post-processing. Clearly remain a 2D semi-realistic painterly illustration, not photography, pure flat vector art, or 3D rendering.
+~~~
+
+**Negative Prompt**
+
+~~~text
+photorealistic, 3D render, flat vector style, pure cel shading, watercolor bleed, oil painting impasto, chibi proportions, deformed anatomy, malformed hands, extra limbs, oversized wolf, sunny summer weather, cluttered composition, readable text, watermark
+~~~
+
+</details>
+
+
 <a id="gallery-index"></a>
 
 ## 🎨 Prompt Showcase

@@ -321,6 +321,41 @@ result = client.images.generate(
 
 ---
 
+## 🔁 图片反推提示词示例
+
+这个示例展示了两阶段工作流：先使用 `image-prompt-reverse` Skill 分析参考图并反推出提示词，再将提示词交给 GPT Image 2 生成新的图片。
+
+<table>
+  <tr>
+    <td width="50%" align="center" valign="top">
+      <img src="docs/illustration/image-prompt-reverse-reference.jpg" width="100%" alt="贡献者提供的冬季城市小巷参考图"/>
+      <sub>参考原图 · Contributor-provided</sub>
+    </td>
+    <td width="50%" align="center" valign="top">
+      <img src="docs/illustration/image-prompt-reverse-result.png" width="100%" alt="根据反推提示词生成的 ImageGen 结果"/>
+      <sub>生成结果 · ImageGen output</sub>
+    </td>
+  </tr>
+</table>
+
+<details>
+<summary><strong>📝 反推生成提示词</strong></summary>
+
+**正向 Prompt**
+
+~~~text
+高完成度半写实日系叙事插画，以厚涂数字绘画为主要画风，采用宽窄变化笔触、硬边与柔和过渡并存的塑形方式、边缘线和受控表面纹理，具有游戏概念美术般的冷峻电影叙事感。横幅约十六比九，冬季城市小巷形成明显纵深透视，积雪道路从前景向画面中央远处收束；一只体型高大、毛发蓬松的深灰蓝色狼犬位于左侧前景，身体侧面对右方，头部抬起，正与蹲在右侧中央的戴兜帽年轻女性互动。女性半蹲在雪地上，身体朝向左侧，一只戴手套的手轻轻触碰狼犬的鼻梁或额头，另一只手靠近膝盖保持平衡，动作克制而亲密。她穿浅灰色宽大防寒兜帽外套，兜帽顶部带尖耳形装饰，外套有深灰拼接、口袋、绑带和少量暗红橙色细节，内搭黑色衣物、黑色紧身裤和厚重深色靴子；黑色或深棕短发从兜帽下露出，面部被阴影部分遮挡，低头注视狼犬，表情安静、疲惫却温柔。狼犬毛发以分层笔触表现，背部、颈部和尾部蓬松厚重，冷蓝灰暗部与浅灰高光交错，轮廓被逆光勾亮。左侧是金属围栏、箱体和深色灌木，远处排列高耸城市建筑、路灯、电线杆和蓝灰天空；右侧是深色建筑立面、窗户、积雪屋檐、常青树枝以及前景纸箱和工业杂物，环境标识仅保留模糊图形，无清晰可读文字。主光从小巷远处偏左方向穿入，冷蓝环境光覆盖阴影，远处带温暖金黄色反光，雪地和人物、狼犬边缘形成细微轮廓光，光比中高，暖橙色衣物细节成为视觉焦点。前景积雪、泥水和浅薄积水具有湿润反射，背景建筑通过空气透视逐渐变淡，人物与狼犬保持清晰，空间依靠前中后景、遮挡和透视线建立层次而非强烈虚化。整体情绪是寒冷城市中的孤独、信任和短暂温柔，保留粗粝笔触、冷暖对照、电影级构图和后期，明确为二维半写实厚涂插画，不是摄影、纯扁平矢量或三维渲染。
+~~~
+
+**Negative Prompt**
+
+~~~text
+photorealistic, 3D render, flat vector style, pure cel shading, watercolor bleed, oil painting impasto, chibi proportions, deformed anatomy, malformed hands, extra limbs, oversized wolf, sunny summer weather, cluttered composition, readable text, watermark
+~~~
+
+</details>
+
+
 <a id="gallery-index"></a>
 
 ## 🎨 提示词精选展示
