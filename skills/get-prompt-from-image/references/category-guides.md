@@ -1,69 +1,69 @@
-# 主体与媒介专项分析
+# Subject and Medium-Specific Analysis
 
-根据图片实际类型选择相关章节。多主体图片可以组合多个章节，但不得强行加入不存在的特征。
+Select the relevant sections according to the image’s actual type. Images with multiple subjects may combine multiple sections, but must not force in absent features.
 
-## 通用图片
+## General Image
 
-完整覆盖主体内容、艺术或媒介风格、色彩方案、光影设定、构图逻辑、材质质感、镜头语言、空间层次、情绪、画质要求和细节表现。中文与英文正向 Prompt 必须语义一致，不得在英文版中擅自增加新元素。
+Cover the subject content, artistic or medium style, color scheme, lighting, composition logic, material qualities, camera language, spatial layers, mood, image-quality requirements, and detail treatment. The Chinese and English positive Prompts must have the same meaning; do not add new elements in the English version.
 
-## 人物与人像摄影
+## People and Portrait Photography
 
-分析明显可见的年龄感和性别呈现、脸部轮廓、五官、发型、妆容、表情、视线、头部角度、身体朝向、姿态、肩颈、手腿位置、身体重心、最靠近镜头的部位、透视强调、服装、配饰、皮肤质感，以及人物与环境的关系。无法可靠判断身份、年龄或族群时，只描述可见外观，不作身份推断。
+Analyze clearly visible age cues and gender presentation, facial contour, features, hairstyle, makeup, expression, gaze, head angle, body orientation, posture, shoulder and neck position, hand and leg placement, body weight, the body part closest to the camera, perspective emphasis, clothing, accessories, skin texture, and the relationship between the person and the environment. When identity, age, or ethnicity cannot be judged reliably, describe only visible appearance and do not infer identity.
 
-## 摄影
+## Photography
 
-分析自然光/硬光/柔光/逆光/棚拍光、景深与焦点、广角/自然透视/长焦压缩的视觉效果、冷暖/复古/商业清透/胶片调性、清晰度/颗粒/噪点/锐度/动态模糊，以及纪实、棚拍、生活随拍、时尚人像或电影剧照等摄影类型。只有证据充分时才写具体相机参数，不得虚构焦距、光圈、快门、ISO、相机型号或摄影师姓名。
+Analyze natural, hard, soft, back, or studio light; depth of field and focus; wide-angle, natural-perspective, or telephoto-compression effects; cool/warm, vintage, commercial clarity, or film character; clarity, grain, noise, sharpness, and motion blur; and documentary, studio, casual snapshot, fashion portrait, or cinematic-still photography. Write specific camera parameters only with sufficient evidence; do not invent focal length, aperture, shutter speed, ISO, camera model, or photographer name.
 
-## 产品与商业摄影
+## Product and Commercial Photography
 
-分析产品类别、形状、颜色、朝向、占比、包装结构、边缘、按钮、接口、标签位置、表面材质、高光反射、粗糙度、透明度、阴影落点、水珠/粉末/液体/烟雾/冰块/花瓣等道具、背景布置，以及产品卖点由哪些可见结构和材质体现。不要生成清晰品牌 Logo、乱码包装文字或不存在的功能结构。
+Analyze product category, shape, color, orientation, share of frame, packaging structure, edges, buttons, ports, label position, surface material, specular highlights, roughness, transparency, shadow placement, props such as droplets/powder/liquid/steam/ice/petals, background arrangement, and which visible structures and materials communicate the product’s selling points. Do not generate clear brand logos, garbled packaging text, or nonexistent functional structures.
 
-## 字体、Logo 与文字设计
+## Typography, Logos, and Text Design
 
-分析现代/复古/赛博/手写/极简/装饰性风格，字形宽窄、倾斜、圆角、几何感和比例，笔画粗细、衬线或无衬线结构，倒角、切角、连接、断笔和负空间，字距、行距、层级和排版逻辑，描边、发光、渐变、浮雕、阴影和立体效果，金属/磨砂/玻璃/塑料/霓虹/纸张材质，以及配色、构图比例、光影与背景关系。
+Analyze modern, vintage, cyber, handwritten, minimal, or decorative style; letterform width, slant, roundness, geometry, and proportions; stroke weight, serif or sans-serif structure, bevels, cuts, connections, broken strokes, and negative space; letter spacing, line spacing, hierarchy, and layout logic; outlines, glow, gradients, embossing, shadows, and 3D effects; metal, matte, glass, plastic, neon, or paper materials; and the relationship among palette, composition, lighting, and background.
 
-当 Logo 或文字只是附属元素时，将其转写为抽象符号、简化图案或模糊标识。只有用户明确要求并提供文字内容时，才将具体文字写入 Prompt。
+When a logo or text is a supporting element, translate it into an abstract symbol, simplified pattern, or blurred mark. Write specific text in the Prompt only when the user explicitly requests it and provides the content.
 
-## 自然风景与城市场景
+## Natural Landscapes and City Scenes
 
-分析地点与环境类型、季节、天气、清晨/白天/黄昏/蓝调时刻/夜晚、前中后景与地平线、天空/云层/水面/雾气/空气透视、植被/山体/建筑/街道/灯光/反射、街道透视线与建筑几何、光线方向、冷暖变化、景深、透视、细节质感和整体情绪。不得凭模糊视觉效果编造具体地点、城市或地标名称。
+Analyze location and environment type, season, weather, dawn/day/dusk/blue hour/night, foreground/middle ground/background and horizon, sky/clouds/water/mist/atmospheric perspective, vegetation/mountains/buildings/streets/lights/reflections, street perspective lines and building geometry, light direction, warm/cool changes, depth of field, perspective, detail texture, and overall mood. Do not invent a specific location, city, or landmark from a vague visual effect.
 
-## 建筑与室内
+## Architecture and Interior
 
-分析空间类型和功能、透视方向、消失点、主要线条、前中后景、建筑/家具/墙面/地面/装饰材质、自然光/窗光/灯带/环境光来源、空间尺度、秩序和情绪、是否需要整洁/无人/无杂物，以及室内外连接和窗外景观。
+Analyze space type and function, perspective direction, vanishing points, main lines, foreground/middle ground/background, architecture/furniture/wall/floor/decorative materials, natural/window/strip/ambient light sources, spatial scale, order and mood, whether the space should be tidy/empty/free of clutter, and the connection between interior and exterior or the view outside the windows.
 
-## 插画
+## Illustration
 
-当图片的主要媒介属于手绘、板绘、平涂、厚涂、水彩、铅笔、版画、矢量、二次元、儿童绘本或其他插画时，必须继续读取并应用 [illustration-style.md](illustration-style.md)。该专项负责把主体内容与画风表现分开，并优先还原线条、形状、明暗、色彩和肌理等可观察技法。不得用该专项改写摄影、3D 渲染、产品图或其他非插画类型的分析规则。
+When the image’s primary medium is hand-drawn, digital-painted, flat-shaded, painterly, watercolor, pencil, printmaking, vector, anime-style, children’s-book, or another illustration, continue reading and applying [illustration-style.md](illustration-style.md). This section separates subject content from style expression and prioritizes observable techniques such as line, shape, value, color, and texture. Do not use it to rewrite analysis rules for photography, 3D renders, product images, or other non-illustration types.
 
-## 3D 渲染
+## 3D Rendering
 
-分析写实/半写实/3D 卡通/黏土/潮玩/极简风格，建模比例、软边缘、细节精度，磨砂/金属/玻璃/亚克力/树脂/PVC/陶瓷材质，反射、折射、粗糙度、次表面散射和 PBR 质感，三点布光、柔光、轮廓光、体积光、环境光、阴影软硬、接触阴影、抗锯齿和后期辉光。只有证据充分或用户指定时才写 C4D、Blender、Octane 等软件或渲染器；否则使用通用 3D 渲染描述。
+Analyze realistic, semi-realistic, 3D cartoon, clay, toy, or minimalist style; modeling proportions, soft edges, and detail precision; matte, metal, glass, acrylic, resin, PVC, or ceramic materials; reflection, refraction, roughness, subsurface scattering, and PBR qualities; three-point, soft, rim, volumetric, or ambient light; shadow softness, contact shadows, antialiasing, and post-processing glow. Write C4D, Blender, Octane, or other software or renderer names only with sufficient evidence or when specified by the user; otherwise use general 3D-rendering language.
 
-## IP 角色、Q 版、潮玩与盲盒
+## IP Characters, Chibi, Collectible Toys, and Blind Boxes
 
-分析 Q 版/潮玩/治愈/国风/黏土/卡通风格、头身比例、体型、轮廓、五官、表情、发型、神态、服饰、装饰、动作、哑光/树脂/PVC/陶瓷/黏土质感、柔光、纯色背景、展示台、产品化呈现、全身造型和细节密度。最终 Prompt 描述角色外观特征，不依赖具体 IP 或角色名称。
+Analyze chibi, collectible-toy, comforting, traditional-inspired, clay, or cartoon style; head-to-body ratio, body shape, silhouette, facial features, expression, hairstyle, demeanor, clothing, decorations, action, matte/resin/PVC/ceramic/clay qualities, soft light, solid-color background, display stand, product-like presentation, full-body design, and detail density. The final Prompt should describe the character’s visual features without depending on a specific IP or character name.
 
-## 动物
+## Animals
 
-分析动物种类、体型、毛色/羽毛/鳞片颜色、姿态、动作、眼神、毛发/羽毛/鳞片/皮肤/爪子质感、与环境或其他主体的关系、轮廓光和整体情绪。无法可靠识别物种时，描述可见体态和外观，不编造具体品种。
+Analyze animal type, body shape, fur/feather/scale color, posture, action, gaze, fur/feather/scale/skin/claw texture, relationship with the environment or other subjects, rim light, and overall mood. When the species cannot be identified reliably, describe visible posture and appearance without inventing a specific breed.
 
-## 食物
+## Food
 
-分析食物种类、主食材、形状、颜色、摆盘、主体占比、油光、酱汁、蒸汽、焦脆、湿润、奶油、粉末、糖霜、拉丝、滴落、餐具、桌面材质、光线、阴影、景深、拍摄角度，以及食欲感由哪些颜色、光泽、纹理和温度感构成。
+Analyze food type, main ingredients, shape, color, plating, share of frame, oily sheen, sauce, steam, crispness, moisture, cream, powder, frosting, stretch, drips, tableware, tabletop material, lighting, shadows, depth of field, shooting angle, and which colors, gloss, textures, and sense of temperature create appetite appeal.
 
-## 交通工具
+## Vehicles
 
-分析交通工具类型、观察角度、车身或机身材质、反射、灯光、高光线条、静止或运动状态、道路/天空/城市/自然环境、速度线/扬尘/水花/运动模糊等实际存在的效果、透视和主体占比。默认排除清晰品牌 Logo、车牌、编号和可读文字。
+Analyze vehicle type, viewing angle, body or fuselage material, reflections, lights, highlight lines, stationary or moving state, road/sky/city/natural environment, and actually present effects such as speed lines, dust, splashes, or motion blur, as well as perspective and subject scale. By default exclude clear brand logos, license plates, numbers, and readable text.
 
-## 植物与花卉
+## Plants and Flowers
 
-分析植物种类或可见外形、颜色、数量、生长状态、花瓣/叶片/花粉/露珠/纹理、光线是否穿过花瓣或叶片、前后遮挡、虚化和背景关系，以及柔软、清新、浪漫、幽静等情绪的具体视觉来源。
+Analyze plant type or visible form, color, quantity, growth state, petal/leaf/pollen/dew/texture, whether light passes through petals or leaves, foreground and background occlusion, blur, and the relationship with the background, as well as the concrete visual sources of softness, freshness, romance, or quietness.
 
-## 平面海报与视觉设计
+## Graphic Posters and Visual Design
 
-分析版式结构、主视觉位置、色块、图形元素、背景关系、留白、网格、对齐、视觉动线、前后层级、遮挡、比例、文字区域位置与层级、主色/辅助色/强调色、颗粒、渐变、描边、阴影、拼贴或故障效果。如果目标是复现版式而非文字内容，写“预留文字区域”；如果文字仅是画面元素，排除清晰可读文字。
+Analyze layout structure, main-visual position, color blocks, graphic elements, background relationships, negative space, grid, alignment, visual flow, foreground/background hierarchy, occlusion, proportions, text-area position and hierarchy, main/supporting/accent colors, grain, gradients, outlines, shadows, collage, or glitch effects. If the goal is to reproduce the layout rather than the text content, write “reserved text area”; if text is only a visual element, exclude clear readable text.
 
-## 抽象图形与多主体混合
+## Abstract Graphics and Mixed Subjects
 
-分析基础几何、曲线、色块、纹理、重复规律、主次关系、节奏、平衡、方向性、透明叠加、发光、渐变、材质，以及多主体之间的距离、遮挡、比例和叙事关系。只组合实际相关的专项规则，避免把所有类别特征同时写入 Prompt。
+Analyze basic geometry, curves, color blocks, textures, repetition, primary/secondary relationships, rhythm, balance, directionality, transparent overlays, glow, gradients, materials, and the distance, occlusion, proportions, and narrative relationships among multiple subjects. Combine only the specialized rules that are actually relevant; avoid writing every category’s features into the Prompt at once.

@@ -1,59 +1,59 @@
-# 通用图片分析框架
+# General Image Analysis Framework
 
-以下内容仅用于内部分析，不向用户展示。
+The following content is for internal analysis only and must not be shown to the user.
 
-## 1. 用途类型
+## 1. Use Case
 
-判断图片更接近广告素材、游戏美宣 KV、社媒内容图、产品商拍、人像写真、电影剧照、插画海报、3D 角色美宣、电商主图、建筑或室内展示、食物摄影、动物摄影、自然风景或城市场景、平面海报或视觉设计、字体或 Logo 设计、抽象图形或其他用途。用途类型决定提示词应强调叙事、商业展示、人物表现、产品结构、空间设计还是视觉传播。
+Determine whether the image is closer to advertising material, a game key visual, social media content, a commercial product photograph, a portrait, a film still, an illustrated poster, a 3D character key visual, an e-commerce hero image, an architectural or interior showcase, food photography, animal photography, a natural landscape or city scene, a graphic poster or visual design, a typeface or logo design, an abstract graphic, or another use case. The use case determines whether the prompt should emphasize narrative, commercial presentation, human expression, product structure, spatial design, or visual communication.
 
-## 2. 媒介类型
+## 2. Medium
 
-判断图片属于摄影、写实 3D、半写实 3D、二次元插画、厚涂插画、扁平矢量、产品渲染、UI 或平面设计、混合媒介或其他类型。必须在最终 Prompt 中明确媒介边界，并在 Negative Prompt 中排除容易混淆的媒介。
+Determine whether the image is photography, realistic 3D, semi-realistic 3D, anime-style illustration, painterly illustration, flat vector, product rendering, UI or graphic design, mixed media, or another type. The final Prompt must make the medium boundary explicit, and the Negative Prompt must exclude easily confused media.
 
-## 3. 主体类型
+## 3. Subject Type
 
-识别主要主体属于人物、产品、动物、食物、建筑或室内、自然风景、城市场景、交通工具、植物或花卉、字体或 Logo、IP 或潮玩角色、平面海报或视觉设计、抽象图形、多主体混合或其他类型。
+Identify whether the main subject is a person, product, animal, food, architecture or interior, natural landscape, city scene, vehicle, plant or flower, typeface or logo, IP or collectible character, graphic poster or visual design, abstract graphic, mixed subjects, or another type.
 
-只分析与主体类型相关的专项。没有人物时不分析表情、视线和手脚；没有产品时不分析包装和卖点；没有动物时不分析毛发和眼神；没有文字时不分析字体。
+Analyze only the specialized rules relevant to the subject type. Without a person, do not analyze expression, gaze, or limbs; without a product, do not analyze packaging or selling points; without an animal, do not analyze fur or gaze; without text, do not analyze typography.
 
-## 4. 构图
+## 4. Composition
 
-分析画幅比例和横竖方向、主体位置与占比、前景/中景/背景和留白、中心构图/三分法/对称/对角线/框架式构图/散点构图、横线/竖线/斜线/三角形/S 形/圆形/放射线等视觉结构、视觉重心与动线、元素远近关系，以及主体之间的大小、遮挡、重复、平衡和层级。
+Analyze aspect ratio and orientation, subject position and share of the frame, foreground/middle ground/background and negative space, centered/thirds/symmetrical/diagonal/framing/scattered composition, visual structures such as horizontal, vertical, diagonal, triangular, S-shaped, circular, or radial lines, visual center and eye flow, near/far relationships, and the size, occlusion, repetition, balance, and hierarchy among subjects.
 
-## 5. 镜头、视角与透视
+## 5. Camera, Viewpoint, and Perspective
 
-分析平视/俯视/仰视/顶视/鸟瞰、特写/半身/中景/全身/远景、广角感/自然透视/空间压缩感、近大远小与透视汇聚、前景遮挡与框景、透过玻璃/窗户/门缝/树叶观看、景深与焦点位置，以及动态视角、倾斜机位或运动感。
+Analyze eye-level, high-angle, low-angle, top-down, or aerial views; close-up, half-body, medium shot, full-body, or long shot; wide-angle presence, natural perspective, or spatial compression; near-large/far-small scaling and converging perspective; foreground occlusion and framing; viewing through glass, a window, a doorway, or leaves; depth of field and focus position; and dynamic viewpoints, tilted cameras, or a sense of motion.
 
-只有在图像证据或元数据足够明确时才写具体焦距、光圈、快门或相机型号；否则只描述视觉效果。
+Write a specific focal length, aperture, shutter speed, or camera model only when image evidence or metadata is sufficiently clear; otherwise describe only the visual effect.
 
-## 6. 光线
+## 6. Lighting
 
-分析主光方向，硬光/柔光/逆光/侧光/顶光/环境光，自然光/棚拍光/三点布光/窗光/霓虹光/体积光，轮廓光/反光/补光/局部高光/阴影落点，光晕/bloom/彩色眩光/光斑/反射高光，整体冷暖与光比，以及光线如何塑造体积、材质、空间和情绪。
+Analyze key-light direction; hard, soft, back, side, top, or ambient light; natural, studio, three-point, window, neon, or volumetric light; rim light, reflected light, fill light, localized highlights, and shadow placement; bloom, colored flare, light spots, and reflective highlights; overall color temperature and lighting ratio; and how light shapes volume, material, space, and mood.
 
-## 7. 色彩
+## 7. Color
 
-分析主色、辅助色和点缀色，冷暖倾向，饱和度、明度和对比度，单色/互补色/邻近色/冷暖对比，以及霓虹色、高级灰、马卡龙、复古、胶片、商业清透等倾向。说明色彩如何引导视线、分离主体和构成情绪。
+Analyze main, supporting, and accent colors; warm or cool tendency; saturation, value, and contrast; monochrome, complementary, analogous, or warm/cool contrast; and tendencies such as neon, sophisticated gray, pastel, vintage, filmic, or commercial clarity. Explain how color guides the eye, separates the subject, and constructs mood.
 
-## 8. 材质
+## 8. Materials
 
-分析主体和背景表面质感，包括皮肤、毛发、羽毛、鳞片、爪子、布料、织物、皮革、纸张、金属、玻璃、塑料、树脂、PVC、亚克力、陶瓷、木材、石材、墙面、水面、液体、冰块、雾气、烟雾、植物、花瓣、叶片、露珠、屏幕、包装和食物表皮。
+Analyze the surface qualities of the subject and background, including skin, fur, feathers, scales, claws, cloth, fabric, leather, paper, metal, glass, plastic, resin, PVC, acrylic, ceramic, wood, stone, walls, water, liquids, ice, mist, smoke, plants, petals, leaves, dew, screens, packaging, and food surfaces.
 
-描述反光、粗糙、湿润、透明或半透明、磨砂、柔软、硬质、颗粒、织物纹理、划痕、褶皱、油光、霜感和粉末感，并识别最重要的质感记忆点。
+Describe reflectivity, roughness, wetness, transparency or translucency, matte finish, softness, hardness, grain, fabric texture, scratches, wrinkles, oily sheen, frost, and powdery qualities, and identify the most important material memory points.
 
-## 9. 景深、背景与空间层次
+## 9. Depth of Field, Background, and Spatial Layers
 
-分析背景清晰或不同程度的虚化、前景虚化、主体与背景分离、光斑/雾气/烟雾/渐变阴影/纹理/树影/反射、横向或竖向线条/斜向网格/圆形光斑/大片色块/层层山脉/建筑轮廓/城市灯光/街道透视线，以及背景承担叙事信息还是氛围衬托。说明前景、中景和背景之间的遮挡、尺度与空气透视。
+Analyze whether the background is sharp or blurred to different degrees, foreground blur, subject-background separation, bokeh, mist, smoke, gradient shadows, textures, tree shadows, reflections, horizontal or vertical lines, diagonal grids, circular light spots, large color blocks, layered mountains, building silhouettes, city lights, and street perspective lines. Determine whether the background carries narrative information or provides atmospheric support. Explain occlusion, scale, and atmospheric perspective among the foreground, middle ground, and background.
 
-## 10. 内容与情绪
+## 10. Content and Mood
 
-分析主体的外观、形状、大小、颜色、朝向和状态；辅助元素、道具、环境物件与装饰的位置；室内或室外、地点类型、时间、季节、天气和环境状态；主体动作及主体、道具、背景之间的叙事或功能关系；整体情绪及其具体视觉来源。
+Analyze the subject’s appearance, shape, size, color, orientation, and state; the positions of supporting elements, props, environmental objects, and decorations; indoor or outdoor setting, location type, time, season, weather, and environmental state; the subject’s action and the narrative or functional relationship among subject, props, and background; and the overall mood and its concrete visual sources.
 
-## 11. 后期与画质
+## 11. Post-Processing and Image Quality
 
-分析颗粒、噪点、辉光、柔焦、运动模糊、胶片感、色差、锐化、局部高光和镜头眩光，商业精修、电影调色、CG 渲染后期、产品精修、皮肤修饰和材质强化，以及清晰度、细节密度、过曝、欠曝、过度磨皮、过度锐化或低清晰度。
+Analyze grain, noise, glow, soft focus, motion blur, film character, chromatic aberration, sharpening, localized highlights, and lens flare; commercial retouching, cinematic color grading, CG-render post-processing, product retouching, skin correction, and material enhancement; as well as clarity, detail density, overexposure, underexposure, excessive skin smoothing, oversharpening, or low resolution.
 
-将高分辨率、高细节或 8K 作为生成质量要求时，避免把它表述为对原图真实参数的判断。
+When high resolution, high detail, or 8K is used as a generation-quality requirement, avoid presenting it as a judgment about the original image’s actual parameters.
 
-## 12. 视觉锚点
+## 12. Visual Anchors
 
-从独特构图、主体轮廓/姿态/比例、特殊镜头关系、标志性光线、关键材质、背景几何、色彩关系、空间层次和由具体元素构成的情绪中，提炼 3—5 个最影响相似度的要素，并优先写入正向 Prompt 前 1/3。
+Extract the 3–5 elements that most affect similarity from distinctive composition, subject silhouette/pose/proportion, unusual camera relationships, signature lighting, key materials, background geometry, color relationships, spatial layers, and mood constructed from concrete elements. Prioritize them in the first third of the positive Prompt.
