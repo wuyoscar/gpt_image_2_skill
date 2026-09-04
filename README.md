@@ -48,7 +48,7 @@
   </tr>
   <tr>
     <td>Last update</td>
-    <td><strong>2026-05-05</strong></td>
+    <td><strong>2026-09-04</strong></td>
   </tr>
   <tr>
     <td>Docs</td>
@@ -71,7 +71,7 @@
 
 ---
 
-## 🔎 
+## 🔎 What is this repo for?
 
 Use this repo as a **GPT Image 2 prompt gallery**, **image prompt library**, **example of generation showcase**, **agent-skill collection**, and **gpt-image-2 CLI**. It also includes a standalone skill for image-to-prompt analysis. It includes reusable AI image prompts for research paper figures, posters, UI mockups, game HUDs, anime / manga, photography, typography, maps, tattoo design, and reference-image editing workflows.
 
@@ -79,6 +79,27 @@ Use this repo as a **GPT Image 2 prompt gallery**, **image prompt library**, **e
 
 > [!CAUTION]
 > For research figures, treat generated images as references, workflow sketches, or reproducible style targets. We do **not** recommend dropping GPT Image 2 outputs directly into a paper as-is; for academic communication, that can be misleading and is generally bad practice.
+
+## 🆕 Update: Get Prompt from Image
+
+This is a new, genuinely useful addition to the project: **Get Prompt from Image**, also known as **Image Prompt Reverse** or **Prompt Reverse from Image**. Thanks to [@LunarXuan](https://github.com/LunarXuan) for being a contributor and for getting this idea into the repository.
+
+Give a vision-capable agent an image and ask it to run `get-prompt-from-image`. The agent studies the image, extracts a reusable positive and negative prompt, and can then pass that prompt to the separate `gpt-image` skill or GPT Image tool. In many cases, the overall look can be recreated surprisingly well. Results are naturally stochastic, so they will not be pixel-identical every time—but that is also what makes this workflow so much fun to explore.
+
+This skill requires a model or agent with visual capabilities. For example, Gemini 3.8 Flash and GPT-5.6 can work with images; the exact experience depends on the runtime and model you use.
+
+### Try it with an agent
+
+Depending on the runtime, use its slash command, skill command, or plain-language equivalent:
+
+```text
+/get-prompt-from-image
+
+Analyze the image I attached and extract a reusable English positive prompt and a targeted negative prompt.
+Then use the separate gpt-image skill to recreate it.
+```
+
+In runtimes that expose skills with `$` commands, use `$get-prompt-from-image` instead. You can also simply say: **“Use get-prompt-from-image to extract the prompt from this image, then generate a recreation with GPT Image.”**
 
 ---
 
@@ -344,7 +365,7 @@ Distilled from OpenAI's [official GPT Image prompting guide](https://github.com/
 
 ## 🔁 Get Prompt from Image example
 
-This example demonstrates the standalone `get-prompt-from-image` skill. Its output can be used with any image-generation tool, including this repository's separate `gpt-image` skill.
+This example demonstrates the standalone `get-prompt-from-image` skill. The reference image is analyzed first, then the extracted prompt is used to generate a recreation with ImageGen. The output can be used with any image-generation tool, including this repository's separate `gpt-image` skill.
 
 <table>
   <tr>
@@ -358,6 +379,13 @@ This example demonstrates the standalone `get-prompt-from-image` skill. Its outp
     </td>
   </tr>
 </table>
+
+Agent example:
+
+```text
+User: Use /get-prompt-from-image on the attached reference image, then recreate it with GPT Image.
+Agent: Extracts the positive and negative prompts from the reference, calls gpt-image, and returns the generated result.
+```
 
 <details>
 <summary><strong>📝 Reverse-engineered prompt</strong></summary>

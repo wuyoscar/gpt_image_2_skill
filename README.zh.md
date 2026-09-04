@@ -41,7 +41,7 @@
   </tr>
   <tr>
     <td>最后更新</td>
-    <td><strong>2026-05-05</strong></td>
+    <td><strong>2026-09-04</strong></td>
   </tr>
   <tr>
     <td>文档</td>
@@ -69,6 +69,27 @@
 
 > [!CAUTION]
 > 对科研配图来说，生成图更适合作为参考、workflow sketch，或者帮助你复刻某种视觉风格。我们**不建议**把 GPT Image 2 生成的图片原封不动放进论文里当正式图使用；在学术表达里，这样很容易造成误导，也算是 bad practice。
+
+## 🆕 Update：从图片获取 Prompt
+
+这是这次更新里一个非常实用、也很有意思的新功能：**Get Prompt from Image**，也可以叫 **Image Prompt Reverse** 或 **Prompt Reverse from Image**。感谢 [@LunarXuan](https://github.com/LunarXuan) 成为 contributor，并把这个想法带进了仓库。
+
+把一张图片交给具备视觉能力的 Agent，让它调用 `get-prompt-from-image`。它会分析图片，提取出可复用的正向 Prompt 和负向 Prompt，然后把提取出的 Prompt 交给独立的 `gpt-image` Skill 或 GPT Image Tool 重新生成。很多时候整体效果都能还原得相当不错。当然，结果会有一定随机性，不可能每次都逐像素一致；但这也正是这个 workflow 很有意思的地方。
+
+这个 Skill 需要具备视觉能力的模型或 Agent。例如 Gemini 3.8 Flash 和 GPT-5.6 都可以处理图片；实际体验取决于你使用的运行时和模型。
+
+### 让 Agent 试一下
+
+根据运行时的不同，可以使用 slash command、skill command，或者直接用自然语言：
+
+```text
+/get-prompt-from-image
+
+分析我上传的图片，提取一个可复用的英文正向 Prompt 和有针对性的负向 Prompt。
+然后使用独立的 gpt-image Skill 把它重新生成出来。
+```
+
+如果你的运行时使用 `$` 形式的 Skill 命令，也可以输入 `$get-prompt-from-image`。当然也可以直接说：**“使用 get-prompt-from-image 从这张图片中提取 Prompt，然后用 GPT Image 重新生成。”**
 
 ---
 
@@ -334,7 +355,7 @@ result = client.images.generate(
 
 ## 🔁 从图片获取 Prompt 示例
 
-这个示例展示了独立的 `get-prompt-from-image` Skill。它生成的 Prompt 可以交给任意图像生成工具使用，也可以交给本仓库中独立的 `gpt-image` Skill。
+这个示例展示了独立的 `get-prompt-from-image` Skill：先分析参考图，再把提取出的 Prompt 交给 ImageGen 生成还原图。它生成的 Prompt 可以交给任意图像生成工具使用，也可以交给本仓库中独立的 `gpt-image` Skill。
 
 <table>
   <tr>
@@ -348,6 +369,13 @@ result = client.images.generate(
     </td>
   </tr>
 </table>
+
+Agent 示例：
+
+```text
+用户：对我上传的参考图使用 /get-prompt-from-image，然后用 GPT Image 重新生成。
+Agent：从参考图提取正向和负向 Prompt，调用 gpt-image，并返回生成结果。
+```
 
 <details>
 <summary><strong>📝 反推生成提示词</strong></summary>
