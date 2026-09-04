@@ -73,33 +73,12 @@
 
 ## 🔎 What is this repo for?
 
-Use this repo as a **GPT Image 2 prompt gallery**, **image prompt library**, **example of generation showcase**, **agent-skill collection**, and **gpt-image-2 CLI**. It also includes a standalone skill for image-to-prompt analysis. It includes reusable AI image prompts for research paper figures, posters, UI mockups, game HUDs, anime / manga, photography, typography, maps, tattoo design, and reference-image editing workflows.
+Use this repo as a **GPT Image 2 prompt gallery**, **image prompt library**, **generated-image showcase**, **agent-skill collection**, and **gpt-image-2 CLI**. The selected examples cover research paper figures, posters, UI mockups, game HUDs, anime / manga, photography, typography, maps, tattoo design, and reference-image editing.
 
 > This project is not trying to collect every prompt on the internet. We keep a selected set of examples that show what GPT Image 2 can do and how to use it well. Thanks for all the love this little gallery has received 🫶.
 
 > [!CAUTION]
 > For research figures, treat generated images as references, workflow sketches, or reproducible style targets. We do **not** recommend dropping GPT Image 2 outputs directly into a paper as-is; for academic communication, that can be misleading and is generally bad practice.
-
-## 🆕 Update: Get Prompt from Image
-
-This is a new, genuinely useful addition to the project: **Get Prompt from Image**, also known as **Image Prompt Reverse** or **Prompt Reverse from Image**. Thanks to [@LunarXuan](https://github.com/LunarXuan) for being a contributor and for getting this idea into the repository.
-
-Give a vision-capable agent an image and ask it to run `get-prompt-from-image`. The agent studies the image, extracts a reusable positive and negative prompt, and can then pass that prompt to the separate `gpt-image` skill or GPT Image tool. In many cases, the overall look can be recreated surprisingly well. Results are naturally stochastic, so they will not be pixel-identical every time—but that is also what makes this workflow so much fun to explore.
-
-This skill requires a model or agent with visual capabilities. For example, Gemini 3.8 Flash and GPT-5.6 can work with images; the exact experience depends on the runtime and model you use.
-
-### Try it with an agent
-
-Depending on the runtime, use its slash command, skill command, or plain-language equivalent:
-
-```text
-/get-prompt-from-image
-
-Analyze the image I attached and extract a reusable English positive prompt and a targeted negative prompt.
-Then use the separate gpt-image skill to recreate it.
-```
-
-In runtimes that expose skills with `$` commands, use `$get-prompt-from-image` instead. You can also simply say: **“Use get-prompt-from-image to extract the prompt from this image, then generate a recreation with GPT Image.”**
 
 ---
 
@@ -107,7 +86,7 @@ Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md), [CODE_OF_C
 
 ## 📥 
 
-This repo contains two independent skills: `gpt-image` generates or edits images with GPT Image 2, while `get-prompt-from-image` turns a reference image into reusable image-generation prompts. Install either one or both; neither skill requires the other.
+Choose either skill or install both: `gpt-image` generates and edits images, while `get-prompt-from-image` extracts prompts from reference images.
 
 Before installing, check whether the skill or CLI is already available. Do not reinstall blindly, overwrite an existing skill folder, or create/replace API-key files. Use your runtime's own skill list/status command when available; global/shared installs should be an explicit user choice, not an automatic setup step.
 
@@ -248,6 +227,50 @@ Reads `OPENAI_API_KEY` from process env, then `.env`, then `~/.env` without over
 
 ## ⚡ Quick Usage & Prompting Fundamentals
 
+### 🆕 Update: Get Prompt from Image
+
+Thanks to [@LunarXuan](https://github.com/LunarXuan) for contributing **Get Prompt from Image**. Give a vision-capable agent an image, and this skill extracts a reusable prompt that you can pass to `gpt-image` or another image-generation tool. Models such as Gemini 3.8 Flash and GPT-5.6 support vision; results vary between runs, but the overall look can often be recreated surprisingly well.
+
+Attach an image and invoke the skill with a slash command, `$get-prompt-from-image`, or plain language:
+
+```text
+/get-prompt-from-image
+Extract a reusable English positive prompt and a targeted negative prompt from this image, then recreate it with gpt-image.
+```
+
+#### Example
+
+<table>
+  <tr>
+    <td width="50%" align="center" valign="top">
+      <img src="docs/illustration/get-prompt-from-image-reference.jpg" width="100%" alt="Contributor-provided snowy urban alley reference image"/>
+      <sub>Reference image · Contributor-provided</sub>
+    </td>
+    <td width="50%" align="center" valign="top">
+      <img src="docs/illustration/get-prompt-from-image-result.png" width="100%" alt="ImageGen result generated from the reverse-engineered prompt"/>
+      <sub>Generated result · ImageGen output</sub>
+    </td>
+  </tr>
+</table>
+
+<details>
+<summary><strong>📝 Extracted prompt used for the generated result</strong></summary>
+
+**Positive Prompt**
+
+~~~text
+A highly polished semi-realistic Japanese narrative illustration rendered in a painterly digital style, using varied brush widths, a combination of hard edges and soft transitions, restrained contour lines, and controlled surface texture. The image should feel like a cold cinematic game-concept artwork. Use a wide 16:9 composition with strong depth in a snowy urban alley, where the snow-covered road narrows toward a distant vanishing point near the center. Place a large fluffy dark blue-gray wolfdog in the left foreground, shown in side profile facing right with its head raised, interacting with a hooded young woman kneeling near the center-right. She crouches in the snow facing left, gently touching the wolfdog’s muzzle or forehead with one gloved hand while the other rests near her knee for balance, creating a restrained and intimate gesture. She wears an oversized pale-gray winter hooded jacket with pointed ear-like details on top, dark gray panels, pockets, straps, and small muted red-orange accents, over black clothing, fitted black pants, and heavy dark boots. Short black or deep-brown hair falls from beneath the hood; her face is partly shadowed as she looks down at the wolfdog with a quiet, tired, yet gentle expression. Render the wolfdog’s fur with layered directional brushstrokes, making the back, neck, and tail thick and voluminous, with cool blue-gray shadows, pale highlights, and a subtle rim light along the silhouette. On the left, include metal fencing, utility boxes, and dense dark shrubs; in the distance, show tall urban buildings, street lamps, utility poles, and a blue-gray sky. On the right, include dark building facades, windows, snow-covered roof edges, evergreen branches, and foreground cardboard boxes and industrial clutter. Any environmental labels should remain blurred graphic marks with no readable text. Let the main light enter from the distant upper-left side of the alley, combining cold blue ambient shadows with warm golden reflections in the distance. Add subtle rim light to the snow, the woman, and the wolfdog, with medium-high contrast and warm orange clothing details acting as focal accents. Snow, slush, and shallow puddles in the foreground should show damp reflections. Use atmospheric perspective to soften distant buildings while keeping the woman and wolfdog clear. Establish depth through foreground, middle ground, background, occlusion, and perspective lines rather than strong blur. The mood is loneliness, trust, and a brief moment of tenderness in a frozen city. Preserve rough painterly strokes, cool-warm contrast, cinematic composition, and refined post-processing. Clearly remain a 2D semi-realistic painterly illustration, not photography, pure flat vector art, or 3D rendering.
+~~~
+
+**Negative Prompt**
+
+~~~text
+photorealistic, 3D render, flat vector style, pure cel shading, watercolor bleed, oil painting impasto, chibi proportions, deformed anatomy, malformed hands, extra limbs, oversized wolf, sunny summer weather, cluttered composition, readable text, watermark
+~~~
+</details>
+
+---
+
 <details>
 <summary><strong>CLI quick usage</strong></summary>
 
@@ -362,48 +385,6 @@ Distilled from OpenAI's [official GPT Image prompting guide](https://github.com/
 </details>
 
 ---
-
-## 🔁 Get Prompt from Image example
-
-This example demonstrates the standalone `get-prompt-from-image` skill. The reference image is analyzed first, then the extracted prompt is used to generate a recreation with ImageGen. The output can be used with any image-generation tool, including this repository's separate `gpt-image` skill.
-
-<table>
-  <tr>
-    <td width="50%" align="center" valign="top">
-      <img src="docs/illustration/get-prompt-from-image-reference.jpg" width="100%" alt="Contributor-provided snowy urban alley reference image"/>
-      <sub>Reference image · Contributor-provided</sub>
-    </td>
-    <td width="50%" align="center" valign="top">
-      <img src="docs/illustration/get-prompt-from-image-result.png" width="100%" alt="ImageGen result generated from the reverse-engineered prompt"/>
-      <sub>Generated result · ImageGen output</sub>
-    </td>
-  </tr>
-</table>
-
-Agent example:
-
-```text
-User: Use /get-prompt-from-image on the attached reference image, then recreate it with GPT Image.
-Agent: Extracts the positive and negative prompts from the reference, calls gpt-image, and returns the generated result.
-```
-
-<details>
-<summary><strong>📝 Reverse-engineered prompt</strong></summary>
-
-**Positive Prompt**
-
-~~~text
-A highly polished semi-realistic Japanese narrative illustration rendered in a painterly digital style, using varied brush widths, a combination of hard edges and soft transitions, restrained contour lines, and controlled surface texture. The image should feel like a cold cinematic game-concept artwork. Use a wide 16:9 composition with strong depth in a snowy urban alley, where the snow-covered road narrows toward a distant vanishing point near the center. Place a large fluffy dark blue-gray wolfdog in the left foreground, shown in side profile facing right with its head raised, interacting with a hooded young woman kneeling near the center-right. She crouches in the snow facing left, gently touching the wolfdog’s muzzle or forehead with one gloved hand while the other rests near her knee for balance, creating a restrained and intimate gesture. She wears an oversized pale-gray winter hooded jacket with pointed ear-like details on top, dark gray panels, pockets, straps, and small muted red-orange accents, over black clothing, fitted black pants, and heavy dark boots. Short black or deep-brown hair falls from beneath the hood; her face is partly shadowed as she looks down at the wolfdog with a quiet, tired, yet gentle expression. Render the wolfdog’s fur with layered directional brushstrokes, making the back, neck, and tail thick and voluminous, with cool blue-gray shadows, pale highlights, and a subtle rim light along the silhouette. On the left, include metal fencing, utility boxes, and dense dark shrubs; in the distance, show tall urban buildings, street lamps, utility poles, and a blue-gray sky. On the right, include dark building facades, windows, snow-covered roof edges, evergreen branches, and foreground cardboard boxes and industrial clutter. Any environmental labels should remain blurred graphic marks with no readable text. Let the main light enter from the distant upper-left side of the alley, combining cold blue ambient shadows with warm golden reflections in the distance. Add subtle rim light to the snow, the woman, and the wolfdog, with medium-high contrast and warm orange clothing details acting as focal accents. Snow, slush, and shallow puddles in the foreground should show damp reflections. Use atmospheric perspective to soften distant buildings while keeping the woman and wolfdog clear. Establish depth through foreground, middle ground, background, occlusion, and perspective lines rather than strong blur. The mood is loneliness, trust, and a brief moment of tenderness in a frozen city. Preserve rough painterly strokes, cool-warm contrast, cinematic composition, and refined post-processing. Clearly remain a 2D semi-realistic painterly illustration, not photography, pure flat vector art, or 3D rendering.
-~~~
-
-**Negative Prompt**
-
-~~~text
-photorealistic, 3D render, flat vector style, pure cel shading, watercolor bleed, oil painting impasto, chibi proportions, deformed anatomy, malformed hands, extra limbs, oversized wolf, sunny summer weather, cluttered composition, readable text, watermark
-~~~
-
-</details>
-
 
 <a id="gallery-index"></a>
 
@@ -1636,80 +1617,88 @@ Make me an image in 35 mm film style of a diagram showing the knowledge of camer
 
 <table>
   <tr>
-    <td width="25%" align="center" valign="top">
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/clinical-cohort-flow.png"><img src="docs/research-paper-figures/clinical-cohort-flow.png" width="100%" alt="Patient cohort and multimodal biomarker workflow"/></a><br/>
       <sub><strong>A · Patient cohort and multimodal biomarker workflow</strong><br/><code>"landscape"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
-    <td width="25%" align="center" valign="top">
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/single-cell-immune-atlas.png"><img src="docs/research-paper-figures/single-cell-immune-atlas.png" width="100%" alt="Single-cell immune atlas"/></a><br/>
       <sub><strong>B · Single-cell immune atlas</strong><br/><code>"landscape"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
-    <td width="25%" align="center" valign="top">
+  </tr>
+  <tr>
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/multimodal-medical-ai-method.png"><img src="docs/research-paper-figures/multimodal-medical-ai-method.png" width="100%" alt="Multimodal medical-AI method"/></a><br/>
       <sub><strong>C · Multimodal medical-AI method</strong><br/><code>"landscape"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
-    <td width="25%" align="center" valign="top">
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/therapeutic-response-bar-forest.png"><img src="docs/research-paper-figures/therapeutic-response-bar-forest.png" width="100%" alt="Therapeutic response statistics"/></a><br/>
       <sub><strong>D · Therapeutic response statistics</strong><br/><code>"landscape"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
   </tr>
   <tr>
-    <td width="25%" align="center" valign="top">
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/transformer-arch.png"><img src="docs/research-paper-figures/transformer-arch.png" width="100%" alt="Transformer encoder–decoder architecture"/></a><br/>
       <sub><strong>E · Transformer encoder–decoder architecture</strong><br/><code>"landscape"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
-    <td width="25%" align="center" valign="top">
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/agent-architecture.png"><img src="docs/research-paper-figures/agent-architecture.png" width="100%" alt="Multi-agent LLM system architecture"/></a><br/>
       <sub><strong>F · Multi-agent LLM system architecture</strong><br/><code>"landscape"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
-    <td width="25%" align="center" valign="top">
+  </tr>
+  <tr>
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/diffusion-chain.png"><img src="docs/research-paper-figures/diffusion-chain.png" width="100%" alt="Denoising diffusion forward/reverse chain"/></a><br/>
       <sub><strong>G · Denoising diffusion forward/reverse chain</strong><br/><code>"landscape"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
-    <td width="25%" align="center" valign="top">
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/scaling-curves.png"><img src="docs/research-paper-figures/scaling-curves.png" width="100%" alt="Empirical scaling laws plot"/></a><br/>
       <sub><strong>H · Empirical scaling laws plot</strong><br/><code>"landscape"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
   </tr>
   <tr>
-    <td width="25%" align="center" valign="top">
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/benchmark-heatmap.png"><img src="docs/research-paper-figures/benchmark-heatmap.png" width="100%" alt="Benchmark comparison heatmap"/></a><br/>
       <sub><strong>I · Benchmark comparison heatmap</strong><br/><code>"landscape"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
-    <td width="25%" align="center" valign="top">
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/ablation-bars.png"><img src="docs/research-paper-figures/ablation-bars.png" width="100%" alt="Ablation bar chart with error bars"/></a><br/>
       <sub><strong>J · Ablation bar chart with error bars</strong><br/><code>"landscape"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
-    <td width="25%" align="center" valign="top">
+  </tr>
+  <tr>
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/data-sankey.png"><img src="docs/research-paper-figures/data-sankey.png" width="100%" alt="LLM pretraining data-mixture sankey"/></a><br/>
       <sub><strong>K · LLM pretraining data-mixture sankey</strong><br/><code>"landscape"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
-    <td width="25%" align="center" valign="top">
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/attention-heatmap.png"><img src="docs/research-paper-figures/attention-heatmap.png" width="100%" alt="Multi-head attention heatmaps"/></a><br/>
       <sub><strong>L · Multi-head attention heatmaps</strong><br/><code>"landscape"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
   </tr>
   <tr>
-    <td width="25%" align="center" valign="top">
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/model-timeline.png"><img src="docs/research-paper-figures/model-timeline.png" width="100%" alt="Frontier LLM family tree (2018–2026)"/></a><br/>
       <sub><strong>M · Frontier LLM family tree (2018–2026)</strong><br/><code>"landscape"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
-    <td width="25%" align="center" valign="top">
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/react-trace.png"><img src="docs/research-paper-figures/react-trace.png" width="100%" alt="ReAct reasoning trace"/></a><br/>
       <sub><strong>N · ReAct reasoning trace</strong><br/><code>"landscape"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
-    <td width="25%" align="center" valign="top">
+  </tr>
+  <tr>
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/frontier-safety-eval-loop.png"><img src="docs/research-paper-figures/frontier-safety-eval-loop.png" width="100%" alt="Frontier Safety Eval Loop"/></a><br/>
       <sub><strong>O · Frontier Safety Eval Loop</strong><br/><code>"landscape"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
-    <td width="25%" align="center" valign="top">
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/llm-persona-atlas.png"><img src="docs/research-paper-figures/llm-persona-atlas.png" width="100%" alt="LLM Persona Atlas"/></a><br/>
       <sub><strong>P · LLM Persona Atlas</strong><br/><code>"wide"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
   </tr>
 </table>
 
-<p align="center"><sub>Research Paper Figures · 4×4 literature-science figure grid · Curated / source-attributed prompts retained below</sub></p>
+<p align="center"><sub>Research Paper Figures · 8×2 literature-science figure grid · Curated / source-attributed prompts retained below</sub></p>
 
 <details>
 <summary><strong>📝 Prompts for all 16 research figures</strong></summary>

@@ -63,33 +63,12 @@
 
 ## 🔎 这个仓库适合什么场景
 
-你可以把它当作 **GPT Image 2 Prompt Gallery**、**Image Prompt Library**、**Text-to-Image Prompt Collection**、**Prompt-to-Image 示例仓库**、**Agent Skill Collection** 和 **gpt-image-2 CLI**，也包含独立的图片反推 Prompt Skill。目前收录了科研配图、海报设计、UI Mockup、游戏 HUD、动漫 / 漫画、摄影风格、字体设计、地图导航、纹身设计，以及参考图编辑等 AI image prompts / examples。
+你可以把它当作 **GPT Image 2 Prompt Gallery**、**Image Prompt Library**、**Text-to-Image Prompt Collection**、**Prompt-to-Image 示例仓库**、**Agent Skill Collection** 和 **gpt-image-2 CLI**。精选示例覆盖科研配图、海报设计、UI Mockup、游戏 HUD、动漫 / 漫画、摄影风格、字体设计、地图导航、纹身设计和参考图编辑。
 
 > 这个项目并不是想收集越多 Prompt 越好。我们更想保留一组有代表性的例子：展示 GPT Image 2 能做什么，以及这些能力应该怎么用。也很感谢大家喜欢这个小 gallery 🫶；后续如果有时间，我也会把背后的自动化 patch / update 流程分享出来。
 
 > [!CAUTION]
 > 对科研配图来说，生成图更适合作为参考、workflow sketch，或者帮助你复刻某种视觉风格。我们**不建议**把 GPT Image 2 生成的图片原封不动放进论文里当正式图使用；在学术表达里，这样很容易造成误导，也算是 bad practice。
-
-## 🆕 Update：从图片获取 Prompt
-
-这是这次更新里一个非常实用、也很有意思的新功能：**Get Prompt from Image**，也可以叫 **Image Prompt Reverse** 或 **Prompt Reverse from Image**。感谢 [@LunarXuan](https://github.com/LunarXuan) 成为 contributor，并把这个想法带进了仓库。
-
-把一张图片交给具备视觉能力的 Agent，让它调用 `get-prompt-from-image`。它会分析图片，提取出可复用的正向 Prompt 和负向 Prompt，然后把提取出的 Prompt 交给独立的 `gpt-image` Skill 或 GPT Image Tool 重新生成。很多时候整体效果都能还原得相当不错。当然，结果会有一定随机性，不可能每次都逐像素一致；但这也正是这个 workflow 很有意思的地方。
-
-这个 Skill 需要具备视觉能力的模型或 Agent。例如 Gemini 3.8 Flash 和 GPT-5.6 都可以处理图片；实际体验取决于你使用的运行时和模型。
-
-### 让 Agent 试一下
-
-根据运行时的不同，可以使用 slash command、skill command，或者直接用自然语言：
-
-```text
-/get-prompt-from-image
-
-分析我上传的图片，提取一个可复用的英文正向 Prompt 和有针对性的负向 Prompt。
-然后使用独立的 gpt-image Skill 把它重新生成出来。
-```
-
-如果你的运行时使用 `$` 形式的 Skill 命令，也可以输入 `$get-prompt-from-image`。当然也可以直接说：**“使用 get-prompt-from-image 从这张图片中提取 Prompt，然后用 GPT Image 重新生成。”**
 
 ---
 
@@ -97,7 +76,7 @@
 
 ## 📥 安装
 
-本仓库包含两个独立 Skill：`gpt-image` 用 GPT Image 2 生成或编辑图片；`get-prompt-from-image` 将参考图转换为可复用的生图 Prompt。你可以安装任意一个，也可以同时安装；两者互不依赖。
+可以任选一个 Skill，也可以同时安装：`gpt-image` 负责生成和编辑图片，`get-prompt-from-image` 负责从参考图提取 Prompt。
 
 安装前先检查 Skill 或 CLI 是否已经可用。不要盲目重复安装、覆盖已有 skill 文件夹，或创建 / 替换 API Key 文件。优先使用你的运行时自带的 skill list/status 命令；全局 / 共享安装必须是用户明确选择，而不是自动 setup 的默认动作。
 
@@ -238,6 +217,50 @@ uv tool upgrade gpt-image-cli
 
 ## ⚡ 快速使用与提示词基础
 
+### 🆕 Update：从图片获取 Prompt
+
+感谢 [@LunarXuan](https://github.com/LunarXuan) 贡献 **Get Prompt from Image**。把图片交给具备视觉能力的 Agent，这个 Skill 会提取可复用的 Prompt，再交给 `gpt-image` 或其他生图工具。Gemini 3.8 Flash、GPT-5.6 等模型支持视觉能力；每次生成会有一定随机性，但整体效果通常可以还原得很好。
+
+上传图片后，可以使用 slash command、`$get-prompt-from-image`，或者直接用自然语言调用：
+
+```text
+/get-prompt-from-image
+从这张图片中提取可复用的英文正向 Prompt 和有针对性的负向 Prompt，然后使用 gpt-image 重新生成。
+```
+
+#### 实际效果
+
+<table>
+  <tr>
+    <td width="50%" align="center" valign="top">
+      <img src="docs/illustration/get-prompt-from-image-reference.jpg" width="100%" alt="贡献者提供的冬季城市小巷参考图"/>
+      <sub>参考原图 · Contributor-provided</sub>
+    </td>
+    <td width="50%" align="center" valign="top">
+      <img src="docs/illustration/get-prompt-from-image-result.png" width="100%" alt="根据反推提示词生成的 ImageGen 结果"/>
+      <sub>生成结果 · ImageGen output</sub>
+    </td>
+  </tr>
+</table>
+
+<details>
+<summary><strong>📝 生成结果所使用的反推 Prompt</strong></summary>
+
+**正向 Prompt**
+
+~~~text
+高完成度半写实日系叙事插画，以厚涂数字绘画为主要画风，采用宽窄变化笔触、硬边与柔和过渡并存的塑形方式、边缘线和受控表面纹理，具有游戏概念美术般的冷峻电影叙事感。横幅约十六比九，冬季城市小巷形成明显纵深透视，积雪道路从前景向画面中央远处收束；一只体型高大、毛发蓬松的深灰蓝色狼犬位于左侧前景，身体侧面对右方，头部抬起，正与蹲在右侧中央的戴兜帽年轻女性互动。女性半蹲在雪地上，身体朝向左侧，一只戴手套的手轻轻触碰狼犬的鼻梁或额头，另一只手靠近膝盖保持平衡，动作克制而亲密。她穿浅灰色宽大防寒兜帽外套，兜帽顶部带尖耳形装饰，外套有深灰拼接、口袋、绑带和少量暗红橙色细节，内搭黑色衣物、黑色紧身裤和厚重深色靴子；黑色或深棕短发从兜帽下露出，面部被阴影部分遮挡，低头注视狼犬，表情安静、疲惫却温柔。狼犬毛发以分层笔触表现，背部、颈部和尾部蓬松厚重，冷蓝灰暗部与浅灰高光交错，轮廓被逆光勾亮。左侧是金属围栏、箱体和深色灌木，远处排列高耸城市建筑、路灯、电线杆和蓝灰天空；右侧是深色建筑立面、窗户、积雪屋檐、常青树枝以及前景纸箱和工业杂物，环境标识仅保留模糊图形，无清晰可读文字。主光从小巷远处偏左方向穿入，冷蓝环境光覆盖阴影，远处带温暖金黄色反光，雪地和人物、狼犬边缘形成细微轮廓光，光比中高，暖橙色衣物细节成为视觉焦点。前景积雪、泥水和浅薄积水具有湿润反射，背景建筑通过空气透视逐渐变淡，人物与狼犬保持清晰，空间依靠前中后景、遮挡和透视线建立层次而非强烈虚化。整体情绪是寒冷城市中的孤独、信任和短暂温柔，保留粗粝笔触、冷暖对照、电影级构图和后期，明确为二维半写实厚涂插画，不是摄影、纯扁平矢量或三维渲染。
+~~~
+
+**Negative Prompt**
+
+~~~text
+photorealistic, 3D render, flat vector style, pure cel shading, watercolor bleed, oil painting impasto, chibi proportions, deformed anatomy, malformed hands, extra limbs, oversized wolf, sunny summer weather, cluttered composition, readable text, watermark
+~~~
+</details>
+
+---
+
 <details>
 <summary><strong>CLI 快速使用</strong></summary>
 
@@ -352,48 +375,6 @@ result = client.images.generate(
 </details>
 
 ---
-
-## 🔁 从图片获取 Prompt 示例
-
-这个示例展示了独立的 `get-prompt-from-image` Skill：先分析参考图，再把提取出的 Prompt 交给 ImageGen 生成还原图。它生成的 Prompt 可以交给任意图像生成工具使用，也可以交给本仓库中独立的 `gpt-image` Skill。
-
-<table>
-  <tr>
-    <td width="50%" align="center" valign="top">
-      <img src="docs/illustration/get-prompt-from-image-reference.jpg" width="100%" alt="贡献者提供的冬季城市小巷参考图"/>
-      <sub>参考原图 · Contributor-provided</sub>
-    </td>
-    <td width="50%" align="center" valign="top">
-      <img src="docs/illustration/get-prompt-from-image-result.png" width="100%" alt="根据反推提示词生成的 ImageGen 结果"/>
-      <sub>生成结果 · ImageGen output</sub>
-    </td>
-  </tr>
-</table>
-
-Agent 示例：
-
-```text
-用户：对我上传的参考图使用 /get-prompt-from-image，然后用 GPT Image 重新生成。
-Agent：从参考图提取正向和负向 Prompt，调用 gpt-image，并返回生成结果。
-```
-
-<details>
-<summary><strong>📝 反推生成提示词</strong></summary>
-
-**正向 Prompt**
-
-~~~text
-高完成度半写实日系叙事插画，以厚涂数字绘画为主要画风，采用宽窄变化笔触、硬边与柔和过渡并存的塑形方式、边缘线和受控表面纹理，具有游戏概念美术般的冷峻电影叙事感。横幅约十六比九，冬季城市小巷形成明显纵深透视，积雪道路从前景向画面中央远处收束；一只体型高大、毛发蓬松的深灰蓝色狼犬位于左侧前景，身体侧面对右方，头部抬起，正与蹲在右侧中央的戴兜帽年轻女性互动。女性半蹲在雪地上，身体朝向左侧，一只戴手套的手轻轻触碰狼犬的鼻梁或额头，另一只手靠近膝盖保持平衡，动作克制而亲密。她穿浅灰色宽大防寒兜帽外套，兜帽顶部带尖耳形装饰，外套有深灰拼接、口袋、绑带和少量暗红橙色细节，内搭黑色衣物、黑色紧身裤和厚重深色靴子；黑色或深棕短发从兜帽下露出，面部被阴影部分遮挡，低头注视狼犬，表情安静、疲惫却温柔。狼犬毛发以分层笔触表现，背部、颈部和尾部蓬松厚重，冷蓝灰暗部与浅灰高光交错，轮廓被逆光勾亮。左侧是金属围栏、箱体和深色灌木，远处排列高耸城市建筑、路灯、电线杆和蓝灰天空；右侧是深色建筑立面、窗户、积雪屋檐、常青树枝以及前景纸箱和工业杂物，环境标识仅保留模糊图形，无清晰可读文字。主光从小巷远处偏左方向穿入，冷蓝环境光覆盖阴影，远处带温暖金黄色反光，雪地和人物、狼犬边缘形成细微轮廓光，光比中高，暖橙色衣物细节成为视觉焦点。前景积雪、泥水和浅薄积水具有湿润反射，背景建筑通过空气透视逐渐变淡，人物与狼犬保持清晰，空间依靠前中后景、遮挡和透视线建立层次而非强烈虚化。整体情绪是寒冷城市中的孤独、信任和短暂温柔，保留粗粝笔触、冷暖对照、电影级构图和后期，明确为二维半写实厚涂插画，不是摄影、纯扁平矢量或三维渲染。
-~~~
-
-**Negative Prompt**
-
-~~~text
-photorealistic, 3D render, flat vector style, pure cel shading, watercolor bleed, oil painting impasto, chibi proportions, deformed anatomy, malformed hands, extra limbs, oversized wolf, sunny summer weather, cluttered composition, readable text, watermark
-~~~
-
-</details>
-
 
 <a id="gallery-index"></a>
 
@@ -1660,80 +1641,88 @@ Make me an image in 35 mm film style of a diagram showing the knowledge of camer
 
 <table>
   <tr>
-    <td width="25%" align="center" valign="top">
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/clinical-cohort-flow.png"><img src="docs/research-paper-figures/clinical-cohort-flow.png" width="100%" alt="患者队列与多模态生物标志物流程"/></a><br/>
       <sub><strong>A · 患者队列与多模态生物标志物流程</strong><br/><code>"landscape"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
-    <td width="25%" align="center" valign="top">
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/single-cell-immune-atlas.png"><img src="docs/research-paper-figures/single-cell-immune-atlas.png" width="100%" alt="单细胞免疫图谱"/></a><br/>
       <sub><strong>B · 单细胞免疫图谱</strong><br/><code>"landscape"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
-    <td width="25%" align="center" valign="top">
+  </tr>
+  <tr>
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/multimodal-medical-ai-method.png"><img src="docs/research-paper-figures/multimodal-medical-ai-method.png" width="100%" alt="多模态医疗 AI 方法图"/></a><br/>
       <sub><strong>C · 多模态医疗 AI 方法图</strong><br/><code>"landscape"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
-    <td width="25%" align="center" valign="top">
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/therapeutic-response-bar-forest.png"><img src="docs/research-paper-figures/therapeutic-response-bar-forest.png" width="100%" alt="治疗响应统计图"/></a><br/>
       <sub><strong>D · 治疗响应统计图</strong><br/><code>"landscape"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
   </tr>
   <tr>
-    <td width="25%" align="center" valign="top">
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/transformer-arch.png"><img src="docs/research-paper-figures/transformer-arch.png" width="100%" alt="Transformer 编码器–解码器架构"/></a><br/>
       <sub><strong>E · Transformer 编码器–解码器架构</strong><br/><code>"landscape"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
-    <td width="25%" align="center" valign="top">
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/agent-architecture.png"><img src="docs/research-paper-figures/agent-architecture.png" width="100%" alt="多智能体 LLM 系统架构"/></a><br/>
       <sub><strong>F · 多智能体 LLM 系统架构</strong><br/><code>"landscape"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
-    <td width="25%" align="center" valign="top">
+  </tr>
+  <tr>
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/diffusion-chain.png"><img src="docs/research-paper-figures/diffusion-chain.png" width="100%" alt="去噪扩散正/逆向链"/></a><br/>
       <sub><strong>G · 去噪扩散正/逆向链</strong><br/><code>"landscape"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
-    <td width="25%" align="center" valign="top">
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/scaling-curves.png"><img src="docs/research-paper-figures/scaling-curves.png" width="100%" alt="经验缩放规律图"/></a><br/>
       <sub><strong>H · 经验缩放规律图</strong><br/><code>"landscape"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
   </tr>
   <tr>
-    <td width="25%" align="center" valign="top">
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/benchmark-heatmap.png"><img src="docs/research-paper-figures/benchmark-heatmap.png" width="100%" alt="基准对比热图"/></a><br/>
       <sub><strong>I · 基准对比热图</strong><br/><code>"landscape"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
-    <td width="25%" align="center" valign="top">
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/ablation-bars.png"><img src="docs/research-paper-figures/ablation-bars.png" width="100%" alt="带误差条的消融柱状图"/></a><br/>
       <sub><strong>J · 带误差条的消融柱状图</strong><br/><code>"landscape"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
-    <td width="25%" align="center" valign="top">
+  </tr>
+  <tr>
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/data-sankey.png"><img src="docs/research-paper-figures/data-sankey.png" width="100%" alt="LLM 预训练数据混合桑基图"/></a><br/>
       <sub><strong>K · LLM 预训练数据混合桑基图</strong><br/><code>"landscape"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
-    <td width="25%" align="center" valign="top">
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/attention-heatmap.png"><img src="docs/research-paper-figures/attention-heatmap.png" width="100%" alt="多头注意力热图"/></a><br/>
       <sub><strong>L · 多头注意力热图</strong><br/><code>"landscape"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
   </tr>
   <tr>
-    <td width="25%" align="center" valign="top">
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/model-timeline.png"><img src="docs/research-paper-figures/model-timeline.png" width="100%" alt="前沿 LLM 家族树（2018–2026）"/></a><br/>
       <sub><strong>M · 前沿 LLM 家族树（2018–2026）</strong><br/><code>"landscape"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
-    <td width="25%" align="center" valign="top">
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/react-trace.png"><img src="docs/research-paper-figures/react-trace.png" width="100%" alt="ReAct 推理轨迹"/></a><br/>
       <sub><strong>N · ReAct 推理轨迹</strong><br/><code>"landscape"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
-    <td width="25%" align="center" valign="top">
+  </tr>
+  <tr>
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/frontier-safety-eval-loop.png"><img src="docs/research-paper-figures/frontier-safety-eval-loop.png" width="100%" alt="Frontier 安全评测循环"/></a><br/>
       <sub><strong>O · Frontier 安全评测循环</strong><br/><code>"landscape"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
-    <td width="25%" align="center" valign="top">
+    <td width="50%" align="center" valign="top">
       <a href="docs/research-paper-figures/llm-persona-atlas.png"><img src="docs/research-paper-figures/llm-persona-atlas.png" width="100%" alt="LLM Persona Atlas"/></a><br/>
       <sub><strong>P · LLM Persona Atlas</strong><br/><code>"wide"</code> · <code>"high"</code> · <code>"Curated"</code></sub>
     </td>
   </tr>
 </table>
 
-<p align="center"><sub>研究论文图示 · 4×4 literature-science 图示网格 · Curated / 来源提示词见下方</sub></p>
+<p align="center"><sub>研究论文图示 · 8×2 literature-science 图示网格 · Curated / 来源提示词见下方</sub></p>
 
 <details>
 <summary><strong>📝 16 张研究图示的提示词</strong></summary>
