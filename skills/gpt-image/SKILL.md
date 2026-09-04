@@ -1,7 +1,7 @@
 ---
 name: gpt-image
 description: "Use this skill whenever a user asks to generate, create, draw, render, or edit images with GPT Image 2 / gpt-image-2, text-to-image, reference-image editing, inpainting, posters, typography, Chinese text, UI mockups, diagrams, or gallery prompts. Analyze the user's prompt, search the bundled Reference Gallery/craft files for matching design patterns, confer on direction when useful, then call the packaged `gpt-image` CLI or bundled `scripts/generate.py`. Do not write new image-generation code unless explicitly asked to modify this repo."
-compatibility: "Requires Python 3.11+ and either `gpt-image`, `uv`, or `uvx`. CLI/API calls read `OPENAI_API_KEY` and may incur OpenAI API charges."
+compatibility: "Requires Python 3.11+ and either `gpt-image`, `uv`, or `uvx`. CLI/API calls read `OPENAI_API_KEY` for OpenAI or `ATLASCLOUD_API_KEY` / `ATLAS_CLOUD_API_KEY` for Atlas Cloud text-to-image, and may incur API charges."
 metadata: {"openclaw":{"requires":{"anyBins":["gpt-image","uv","uvx"]},"primaryEnv":"OPENAI_API_KEY","homepage":"https://github.com/wuyoscar/gpt_image_2_skill"}}
 ---
 
@@ -41,7 +41,8 @@ uvx --from git+https://github.com/wuyoscar/gpt_image_2_skill gpt-image -p "PROMP
 
 ## Key and cost rules
 
-- CLI reads `OPENAI_API_KEY` from process env, then `.env`, then `~/.env` without overriding existing env; successful API calls may bill the user’s OpenAI account.
+- CLI reads `OPENAI_API_KEY` from process env, then `.env`, then `~/.env` without overriding existing env; successful API calls may bill the user's OpenAI account.
+- Optional `--provider atlascloud` reads `ATLASCLOUD_API_KEY` or `ATLAS_CLOUD_API_KEY` and uses Atlas Cloud's async text-to-image API.
 - If host/runtime has native platform-managed image generation and the user wants that path, use the host tool instead of this CLI.
 - If `OPENAI_API_KEY` is unset, report missing key or use host-native generation when requested; do not write secrets.
 - If user wants to avoid local-key use, respect `unset OPENAI_API_KEY`; if a key exists in `.env`/`~/.env`, tell them to remove/rename it for the session rather than working around it.
@@ -52,10 +53,11 @@ uvx --from git+https://github.com/wuyoscar/gpt_image_2_skill gpt-image -p "PROMP
 | Flag | Values | Use |
 |---|---|---|
 | `-p, --prompt` | string | Required prompt/edit instruction |
+| `--provider` | `openai`, `atlascloud` | Provider; `atlascloud` currently supports text-to-image generation |
 | `-f, --file` | path | Output path; auto-named if omitted |
 | `-i, --image` | repeatable path | Use edits endpoint; supports multiple references |
 | `-m, --mask` | PNG path | Inpaint with alpha mask; requires `-i` |
-| `--model` | default `gpt-image-2` | Image model |
+| `--model` | default `gpt-image-2` | Image model; with `--provider atlascloud`, the default maps to `openai/gpt-image-2/text-to-image` |
 | `--size` | `1k`, `2k`, `4k`, `portrait`, `landscape`, `square`, `wide`, `tall`, or literal | Canvas size |
 | `--quality` | `low`, `medium`, `high`, `auto` | Cost/quality dial |
 | `-n, --n` | integer | Number of images |
@@ -83,6 +85,7 @@ Size policy:
 | Mode | Trigger | Endpoint |
 |---|---|---|
 | Text-to-image | no `-i` | `/v1/images/generations` |
+| Atlas Cloud text-to-image | `--provider atlascloud`, no `-i` | `/api/v1/model/generateImage` + prediction polling |
 | Reference edit | one or more `-i` | `/v1/images/edits` |
 | Inpaint | `-i` + `-m` | `/v1/images/edits` with mask |
 
