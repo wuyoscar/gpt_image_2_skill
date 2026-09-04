@@ -1,5 +1,5 @@
-<h1 align="center">GPT Image 2 Prompt Gallery + Agentic Skill + CLI</h1>
-<p align="center"><em>OpenAI GPT Image 2 Prompt Gallery、Image Prompt Library、Agentic Skill + CLI — 面向支持 Skill 的 Agent 运行时的精选可复用提示词与可运行示例。</em></p>
+<h1 align="center">GPT Image 2 Prompt Gallery + Agent Skills + CLI</h1>
+<p align="center"><em>OpenAI GPT Image 2 Prompt Gallery、Image Prompt Library、Agent Skills + CLI — 面向支持 Skill 的 Agent 运行时的精选可复用提示词与可运行示例。</em></p>
 
 <p align="center">
   <a href="README.md">English</a> · <a href="README.zh.md"><strong>中文</strong></a>
@@ -37,7 +37,7 @@
   </tr>
   <tr>
     <td>支持形态</td>
-    <td><strong>Agentic Skill + CLI</strong> — Claude Code / Codex、OpenClaw、Hermes Agent，以及其他支持 Skill 的 Agent 运行时</td>
+    <td><strong>2 个 Agent Skill + CLI</strong> — Claude Code / Codex、OpenClaw、Hermes Agent，以及其他支持 Skill 的 Agent 运行时</td>
   </tr>
   <tr>
     <td>最后更新</td>
@@ -63,7 +63,7 @@
 
 ## 🔎 这个仓库适合什么场景
 
-你可以把它当作 **GPT Image 2 Prompt Gallery**、**Image Prompt Library**、**Text-to-Image Prompt Collection**、**Prompt-to-Image 示例仓库**、**Codex / Claude Code Agent Skill** 和 **gpt-image-2 CLI**。目前收录了科研配图、海报设计、UI Mockup、游戏 HUD、动漫 / 漫画、摄影风格、字体设计、地图导航、纹身设计，以及参考图编辑等 AI image prompts / examples。
+你可以把它当作 **GPT Image 2 Prompt Gallery**、**Image Prompt Library**、**Text-to-Image Prompt Collection**、**Prompt-to-Image 示例仓库**、**Agent Skill Collection** 和 **gpt-image-2 CLI**，也包含独立的图片反推 Prompt Skill。目前收录了科研配图、海报设计、UI Mockup、游戏 HUD、动漫 / 漫画、摄影风格、字体设计、地图导航、纹身设计，以及参考图编辑等 AI image prompts / examples。
 
 > 这个项目并不是想收集越多 Prompt 越好。我们更想保留一组有代表性的例子：展示 GPT Image 2 能做什么，以及这些能力应该怎么用。也很感谢大家喜欢这个小 gallery 🫶；后续如果有时间，我也会把背后的自动化 patch / update 流程分享出来。
 
@@ -75,6 +75,8 @@
 欢迎贡献 — 请查看 [CONTRIBUTING.md](CONTRIBUTING.md)、[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) 和 [SECURITY.md](SECURITY.md)。
 
 ## 📥 安装
+
+本仓库包含两个独立 Skill：`gpt-image` 用 GPT Image 2 生成或编辑图片；`get-prompt-from-image` 将参考图转换为可复用的生图 Prompt。你可以安装任意一个，也可以同时安装；两者互不依赖。
 
 安装前先检查 Skill 或 CLI 是否已经可用。不要盲目重复安装、覆盖已有 skill 文件夹，或创建 / 替换 API Key 文件。优先使用你的运行时自带的 skill list/status 命令；全局 / 共享安装必须是用户明确选择，而不是自动 setup 的默认动作。
 
@@ -98,31 +100,40 @@ test -n "${OPENAI_API_KEY:-}" && echo "OPENAI_API_KEY is already set (value hidd
 <summary><strong>Codex</strong></summary>
 
 Codex 内置了 `$skill-installer`、`$skill-creator` 等 Skill 管理工具。
-打开 Codex，用这个 GitHub skill 文件夹 URL 调用内置安装器：
+打开 Codex，针对你想安装的每个 Skill，用对应的 GitHub skill 文件夹 URL 调用内置安装器：
 
 ```text
+# gpt-image
 $skill-installer
 Install this skill from GitHub:
 https://github.com/wuyoscar/gpt_image_2_skill/tree/main/skills/gpt-image
+
+# get-prompt-from-image
+$skill-installer
+Install this skill from GitHub:
+https://github.com/wuyoscar/gpt_image_2_skill/tree/main/skills/get-prompt-from-image
 ```
 
-安装器会下载这个 GitHub 文件夹，并放到你的 Codex skills 目录，通常是：
+安装器会下载每个 GitHub 文件夹，并放到你的 Codex skills 目录，通常是：
 
 ```bash
 ~/.codex/skills/gpt-image
+~/.codex/skills/get-prompt-from-image
 ```
 
-安装后重启 Codex，让新的 `$gpt-image` skill 生效。
+安装后重启 Codex，让新的 skills 生效。
 
-如果你想手动安装，可以把 skill 文件夹复制到 Codex 的 skills 目录：
+如果你想手动同时安装，可以把两个 skill 文件夹复制到 Codex 的 skills 目录：
 
 ```bash
 git clone https://github.com/wuyoscar/gpt_image_2_skill.git
 cd gpt_image_2_skill
 
 mkdir -p "${CODEX_HOME:-$HOME/.codex}/skills"
-test -e "${CODEX_HOME:-$HOME/.codex}/skills/gpt-image" && echo "gpt-image skill already exists; stop before overwriting" && exit 1
-cp -R skills/gpt-image "${CODEX_HOME:-$HOME/.codex}/skills/"
+for skill in gpt-image get-prompt-from-image; do
+  test -e "${CODEX_HOME:-$HOME/.codex}/skills/$skill" && echo "$skill already exists; stop before overwriting" && exit 1
+  cp -R "skills/$skill" "${CODEX_HOME:-$HOME/.codex}/skills/"
+done
 ```
 
 </details>
@@ -130,16 +141,14 @@ cp -R skills/gpt-image "${CODEX_HOME:-$HOME/.codex}/skills/"
 <details>
 <summary><strong>AgentSkills / npx skills</strong></summary>
 
-对于 cross-agent `skills` 安装器已经支持的运行时，可以直接从 GitHub 安装同一个 `skills/gpt-image` 文件夹：
+对于 cross-agent `skills` 安装器已经支持的运行时，可以选择任意一个 Skill，也可以直接从 GitHub 同时安装两个：
 
 ```bash
-# Codex
+# 将 --agent 改为 claude-code、codex、opencode、openclaw 或其他受支持运行时。
 npx --yes skills@latest add wuyoscar/gpt_image_2_skill \
-  --skill gpt-image --agent codex --copy
-
-# OpenClaw
-npx --yes skills@latest add wuyoscar/gpt_image_2_skill \
-  --skill gpt-image --agent openclaw --copy
+  --skill gpt-image \
+  --skill get-prompt-from-image \
+  --agent codex --copy
 ```
 
 这些示例刻意不加 `--global`。只有当你明确想把这个 Skill 安装到该运行时的全局 / 共享 skills 目录时，才添加 `--global`。
@@ -151,7 +160,7 @@ npx --yes skills@latest add wuyoscar/gpt_image_2_skill \
 <details>
 <summary><strong>手动安装 Agent Skill</strong></summary>
 
-把 `AGENT_SKILLS_DIR` 设置为你的 Agent 运行时所使用的 skills 目录，然后把本仓库的 skill 文件夹软链接进去。
+把 `AGENT_SKILLS_DIR` 设置为你的 Agent 运行时所使用的 skills 目录，然后把一个或两个 skill 文件夹软链接进去。
 
 ```bash
 git clone https://github.com/wuyoscar/gpt_image_2_skill.git
@@ -164,8 +173,10 @@ cd gpt_image_2_skill
 export AGENT_SKILLS_DIR="/path/to/your/agent/skills"
 
 mkdir -p "$AGENT_SKILLS_DIR"
-test -e "$AGENT_SKILLS_DIR/gpt-image" && echo "gpt-image skill already exists; stop before overwriting" && exit 1
-ln -s "$PWD/skills/gpt-image" "$AGENT_SKILLS_DIR/gpt-image"
+for skill in gpt-image get-prompt-from-image; do
+  test -e "$AGENT_SKILLS_DIR/$skill" && echo "$skill already exists; stop before overwriting" && exit 1
+  ln -s "$PWD/skills/$skill" "$AGENT_SKILLS_DIR/$skill"
+done
 ```
 
 </details>
@@ -321,18 +332,18 @@ result = client.images.generate(
 
 ---
 
-## 🔁 图片反推提示词示例
+## 🔁 从图片获取 Prompt 示例
 
-这个示例展示了两阶段工作流：先使用 `image-prompt-reverse` Skill 分析参考图并反推出提示词，再将提示词交给 GPT Image 2 生成新的图片。
+这个示例展示了独立的 `get-prompt-from-image` Skill。它生成的 Prompt 可以交给任意图像生成工具使用，也可以交给本仓库中独立的 `gpt-image` Skill。
 
 <table>
   <tr>
     <td width="50%" align="center" valign="top">
-      <img src="docs/illustration/image-prompt-reverse-reference.jpg" width="100%" alt="贡献者提供的冬季城市小巷参考图"/>
+      <img src="docs/illustration/get-prompt-from-image-reference.jpg" width="100%" alt="贡献者提供的冬季城市小巷参考图"/>
       <sub>参考原图 · Contributor-provided</sub>
     </td>
     <td width="50%" align="center" valign="top">
-      <img src="docs/illustration/image-prompt-reverse-result.png" width="100%" alt="根据反推提示词生成的 ImageGen 结果"/>
+      <img src="docs/illustration/get-prompt-from-image-result.png" width="100%" alt="根据反推提示词生成的 ImageGen 结果"/>
       <sub>生成结果 · ImageGen output</sub>
     </td>
   </tr>

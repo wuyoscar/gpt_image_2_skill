@@ -1,5 +1,5 @@
-<h1 align="center">GPT Image 2 Prompt Gallery + Agentic Skill + CLI</h1>
-<p align="center"><em>OpenAI GPT Image 2 prompt gallery, image prompt library, agentic skill, and CLI — curated, copy-paste prompts and runnable examples for skill-capable agents.</em></p>
+<h1 align="center">GPT Image 2 Prompt Gallery + Agent Skills + CLI</h1>
+<p align="center"><em>OpenAI GPT Image 2 prompt gallery, image prompt library, agent skills, and CLI — curated, copy-paste prompts and runnable examples for skill-capable agents.</em></p>
 
 <p align="center">
   <a href="README.md"><strong>English</strong></a> · <a href="README.zh.md">中文</a>
@@ -44,7 +44,7 @@
   </tr>
   <tr>
     <td>Surfaces</td>
-    <td><strong>Agentic Skill + CLI</strong> — Claude Code / Codex, OpenClaw, Hermes Agent and other skill-capable agent runtimes</td>
+    <td><strong>2 Agent Skills + CLI</strong> — Claude Code / Codex, OpenClaw, Hermes Agent and other skill-capable agent runtimes</td>
   </tr>
   <tr>
     <td>Last update</td>
@@ -73,7 +73,7 @@
 
 ## 🔎 
 
-Use this repo as a **GPT Image 2 prompt gallery**, **image prompt library**, **example of generation showcase**, **Codex / Claude Code agent skill**, and **gpt-image-2 CLI**. It includes reusable AI image prompts for research paper figures, posters, UI mockups, game HUDs, anime / manga, photography, typography, maps, tattoo design, and reference-image editing workflows.
+Use this repo as a **GPT Image 2 prompt gallery**, **image prompt library**, **example of generation showcase**, **agent-skill collection**, and **gpt-image-2 CLI**. It also includes a standalone skill for image-to-prompt analysis. It includes reusable AI image prompts for research paper figures, posters, UI mockups, game HUDs, anime / manga, photography, typography, maps, tattoo design, and reference-image editing workflows.
 
 > This project is not trying to collect every prompt on the internet. We keep a selected set of examples that show what GPT Image 2 can do and how to use it well. Thanks for all the love this little gallery has received 🫶.
 
@@ -85,6 +85,8 @@ Use this repo as a **GPT Image 2 prompt gallery**, **image prompt library**, **e
 Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md), [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), and [SECURITY.md](SECURITY.md).
 
 ## 📥 
+
+This repo contains two independent skills: `gpt-image` generates or edits images with GPT Image 2, while `get-prompt-from-image` turns a reference image into reusable image-generation prompts. Install either one or both; neither skill requires the other.
 
 Before installing, check whether the skill or CLI is already available. Do not reinstall blindly, overwrite an existing skill folder, or create/replace API-key files. Use your runtime's own skill list/status command when available; global/shared installs should be an explicit user choice, not an automatic setup step.
 
@@ -108,31 +110,40 @@ test -n "${OPENAI_API_KEY:-}" && echo "OPENAI_API_KEY is already set (value hidd
 <summary><strong>Codex</strong></summary>
 
 Codex ships with built-in skill helpers such as `$skill-installer` and `$skill-creator`.
-Open Codex and invoke the built-in installer with this GitHub skill-folder URL:
+Open Codex and invoke the built-in installer with the GitHub skill-folder URL for each skill you want:
 
 ```text
+# gpt-image
 $skill-installer
 Install this skill from GitHub:
 https://github.com/wuyoscar/gpt_image_2_skill/tree/main/skills/gpt-image
+
+# get-prompt-from-image
+$skill-installer
+Install this skill from GitHub:
+https://github.com/wuyoscar/gpt_image_2_skill/tree/main/skills/get-prompt-from-image
 ```
 
-The installer downloads that GitHub folder and places it under your Codex skills directory, usually:
+The installer downloads each GitHub folder and places it under your Codex skills directory, usually:
 
 ```bash
 ~/.codex/skills/gpt-image
+~/.codex/skills/get-prompt-from-image
 ```
 
-Restart Codex after installation so the new `$gpt-image` skill is loaded.
+Restart Codex after installation so the new skills are loaded.
 
-If you prefer to install it manually, copy the skill folder into Codex's skills directory:
+If you prefer to install both manually, copy their skill folders into Codex's skills directory:
 
 ```bash
 git clone https://github.com/wuyoscar/gpt_image_2_skill.git
 cd gpt_image_2_skill
 
 mkdir -p "${CODEX_HOME:-$HOME/.codex}/skills"
-test -e "${CODEX_HOME:-$HOME/.codex}/skills/gpt-image" && echo "gpt-image skill already exists; stop before overwriting" && exit 1
-cp -R skills/gpt-image "${CODEX_HOME:-$HOME/.codex}/skills/"
+for skill in gpt-image get-prompt-from-image; do
+  test -e "${CODEX_HOME:-$HOME/.codex}/skills/$skill" && echo "$skill already exists; stop before overwriting" && exit 1
+  cp -R "skills/$skill" "${CODEX_HOME:-$HOME/.codex}/skills/"
+done
 ```
 
 </details>
@@ -140,16 +151,14 @@ cp -R skills/gpt-image "${CODEX_HOME:-$HOME/.codex}/skills/"
 <details>
 <summary><strong>AgentSkills / npx skills</strong></summary>
 
-For runtimes supported by the cross-agent `skills` installer, install the same `skills/gpt-image` folder directly from GitHub:
+For runtimes supported by the cross-agent `skills` installer, select either skill or install both together from GitHub:
 
 ```bash
-# Codex
+# Change --agent to claude-code, codex, opencode, openclaw, or another supported runtime.
 npx --yes skills@latest add wuyoscar/gpt_image_2_skill \
-  --skill gpt-image --agent codex --copy
-
-# OpenClaw
-npx --yes skills@latest add wuyoscar/gpt_image_2_skill \
-  --skill gpt-image --agent openclaw --copy
+  --skill gpt-image \
+  --skill get-prompt-from-image \
+  --agent codex --copy
 ```
 
 These examples intentionally avoid `--global`. Add `--global` only when you explicitly want this skill installed into that runtime's global/shared skills directory.
@@ -161,7 +170,7 @@ If your runtime is not listed by `skills@latest` yet, use the manual Agent Skill
 <details>
 <summary><strong>Manual agent-skill install</strong></summary>
 
-Set `AGENT_SKILLS_DIR` to the skills directory used by your agent runtime, then symlink this repo's skill folder into it.
+Set `AGENT_SKILLS_DIR` to the skills directory used by your agent runtime, then symlink one or both skill folders into it.
 
 ```bash
 git clone https://github.com/wuyoscar/gpt_image_2_skill.git
@@ -174,8 +183,10 @@ cd gpt_image_2_skill
 export AGENT_SKILLS_DIR="/path/to/your/agent/skills"
 
 mkdir -p "$AGENT_SKILLS_DIR"
-test -e "$AGENT_SKILLS_DIR/gpt-image" && echo "gpt-image skill already exists; stop before overwriting" && exit 1
-ln -s "$PWD/skills/gpt-image" "$AGENT_SKILLS_DIR/gpt-image"
+for skill in gpt-image get-prompt-from-image; do
+  test -e "$AGENT_SKILLS_DIR/$skill" && echo "$skill already exists; stop before overwriting" && exit 1
+  ln -s "$PWD/skills/$skill" "$AGENT_SKILLS_DIR/$skill"
+done
 ```
 
 </details>
@@ -331,18 +342,18 @@ Distilled from OpenAI's [official GPT Image prompting guide](https://github.com/
 
 ---
 
-## 🔁 Image-to-prompt reverse-engineering example
+## 🔁 Get Prompt from Image example
 
-This example demonstrates the proposed two-stage workflow: analyze a reference image with the `image-prompt-reverse` skill, then use the resulting prompt with GPT Image 2 to generate a new image.
+This example demonstrates the standalone `get-prompt-from-image` skill. Its output can be used with any image-generation tool, including this repository's separate `gpt-image` skill.
 
 <table>
   <tr>
     <td width="50%" align="center" valign="top">
-      <img src="docs/illustration/image-prompt-reverse-reference.jpg" width="100%" alt="Contributor-provided snowy urban alley reference image"/>
+      <img src="docs/illustration/get-prompt-from-image-reference.jpg" width="100%" alt="Contributor-provided snowy urban alley reference image"/>
       <sub>Reference image · Contributor-provided</sub>
     </td>
     <td width="50%" align="center" valign="top">
-      <img src="docs/illustration/image-prompt-reverse-result.png" width="100%" alt="ImageGen result generated from the reverse-engineered prompt"/>
+      <img src="docs/illustration/get-prompt-from-image-result.png" width="100%" alt="ImageGen result generated from the reverse-engineered prompt"/>
       <sub>Generated result · ImageGen output</sub>
     </td>
   </tr>

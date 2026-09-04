@@ -1,9 +1,9 @@
 ---
-name: image-prompt-reverse
+name: get-prompt-from-image
 description: Analyze user-provided reference images and reverse-engineer high-fidelity AI image-generation prompts. Use when the user asks to recreate, imitate, reverse-engineer, or extract prompts from photographs, illustrations, 3D renders, products, characters, landscapes, typography, logos, posters, or other visual references. Do not use for requests that only require OCR or an ordinary image description.
 ---
 
-# Image Prompt Reverse Engineering
+# Get Prompt from Image
 
 根据用户上传的目标图片，生成可直接用于 AI 生图工具的高还原度提示词。目标不是简单罗列画面内容，而是还原最影响相似度的视觉机制，包括主体、构图、镜头、光影、色彩、材质、背景、空间层次、情绪、媒介和后期特征。
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Get Prompt from Image"
+  short_description: "Extract reusable image-generation prompts from reference images"
+  default_prompt: "Use $get-prompt-from-image to analyze my uploaded image and produce a high-fidelity positive prompt and negative prompt."
