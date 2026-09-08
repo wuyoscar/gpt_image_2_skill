@@ -1,10 +1,10 @@
 # 📚 Research Paper Figures
 
-Range: No. 75–95 · Count: 21
+Range: No. 76–96 · Count: 21
 
 Load this file only when the request matches this category. For cross-cutting writing rules, pair it with `craft.md`.
 
-### No. 75 · Patient cohort and multimodal biomarker workflow
+### No. 76 · Patient cohort and multimodal biomarker workflow
 
 - Image: `docs/research-paper-figures/clinical-cohort-flow.png`
 
@@ -25,7 +25,7 @@ D. Compact table-style performance summary with three rows: "AUROC", "C-index", 
 Style requirements: white background, light gray axes, thin lines, ample margins, muted teal, dusty blue, soft coral, pale sand, no neon, no dark background, Nature journal figure aesthetics, readable labels, precise arrows, subtle gridlines, no decorative clutter, no fake logos, no watermark.
 ```
 
-### No. 76 · Single-cell immune atlas reveals treatment-response states
+### No. 77 · Single-cell immune atlas reveals treatment-response states
 
 - Image: `docs/research-paper-figures/single-cell-immune-atlas.png`
 
@@ -46,7 +46,7 @@ D. Pseudotime trajectory diagram: a clean branching curve from "naive" to "effec
 Style requirements: literature-science design, white background, thin gray axes, compact legends, readable micro-labels, restrained typography, soft colors, elegant spacing, no 3D, no glossy UI, no fake journal logo, no watermark.
 ```
 
-### No. 77 · Multimodal medical-AI method figure
+### No. 78 · Multimodal medical-AI method figure
 
 - Image: `docs/research-paper-figures/multimodal-medical-ai-method.png`
 
@@ -66,7 +66,7 @@ C. Outputs on the right: three task heads "diagnosis", "risk score", "treatment 
 Style requirements: soft Nature/Science palette (muted teal, dusty blue, sage green, warm sand, coral accents), white background, precise vector-like arrows, modest shadows only, readable labels, lots of whitespace, no futuristic HUD, no clinical gore, no real hospital logos, no watermark.
 ```
 
-### No. 78 · Therapeutic response bar and forest plot
+### No. 79 · Therapeutic response bar and forest plot
 
 - Image: `docs/research-paper-figures/therapeutic-response-bar-forest.png`
 
@@ -87,7 +87,7 @@ D. Minimal mechanism schematic: adaptive therapy reduces inflammatory signaling 
 Style requirements: literature-science aesthetic, white background, soft desaturated colors, thin gray axes, clear legends, compact labels, generous margins, Nature-style figure polish, no fake values that look too random, no decorative background, no watermark.
 ```
 
-### No. 79 · Transformer encoder–decoder architecture
+### No. 80 · Transformer encoder–decoder architecture
 
 - Image: `docs/research-paper-figures/transformer-arch.png`
 
@@ -104,7 +104,7 @@ RIGHT column header: "DECODER (×N)". Blocks bottom-to-top: "Output tokens (shif
 Title: "Transformer: encoder–decoder with multi-head attention". Subtitle: "Vaswani et al., 2017".
 ```
 
-### No. 80 · Retrieval-Augmented Generation pipeline
+### No. 81 · Retrieval-Augmented Generation pipeline
 
 - Image: `docs/research-paper-figures/rag-pipeline.png`
 
@@ -126,7 +126,7 @@ Dashed outline around (2)-(3) labeled "OFFLINE — built once". Dashed outline a
 Title: "Retrieval-Augmented Generation pipeline". Subtitle: "Lewis et al., 2020".
 ```
 
-### No. 81 · Multi-agent LLM system architecture
+### No. 82 · Multi-agent LLM system architecture
 
 - Image: `docs/research-paper-figures/agent-architecture.png`
 
@@ -149,7 +149,7 @@ Bottom inset "Example trace": 8-step horizontal timeline chips from "User asks" 
 Title: "Agentic LLM system: planner orchestrates specialised workers over a shared tool and memory layer". Subtitle: "adapted from AutoGen (Wu et al., 2023), LangGraph, and Anthropic Managed Agents patterns".
 ```
 
-### No. 82 · Denoising diffusion forward/reverse chain
+### No. 83 · Denoising diffusion forward/reverse chain
 
 - Image: `docs/research-paper-figures/diffusion-chain.png`
 
@@ -168,7 +168,7 @@ Far-right curved arrow "T diffusion steps" connecting top-right to bottom-right;
 Title: "Denoising Diffusion: forward corruption and learned reverse". Subtitle: "Ho et al., 2020".
 ```
 
-### No. 83 · Empirical scaling laws plot
+### No. 84 · Empirical scaling laws plot
 
 - Image: `docs/research-paper-figures/scaling-curves.png`
 
@@ -188,7 +188,7 @@ Warm-copper dashed diagonal line labeled "compute-optimal frontier"; open circle
 Title: "Empirical scaling laws: loss vs training compute". Subtitle: "four model sizes on a fixed data mixture; shaded bands = ±1 std over 3 seeds."
 ```
 
-### No. 84 · Benchmark comparison heatmap
+### No. 85 · Benchmark comparison heatmap
 
 - Image: `docs/research-paper-figures/benchmark-heatmap.png`
 
@@ -208,7 +208,7 @@ Vertical color bar on the right with ticks "0", "25", "50", "75", "100" and labe
 Title: "Benchmark comparison across 10 frontier LLMs". Subtitle: "zero-shot accuracy; best per benchmark outlined in bold. Evaluated March 2026."
 ```
 
-### No. 85 · Ablation bar chart with error bars
+### No. 86 · Ablation bar chart with error bars
 
 - Image: `docs/research-paper-figures/ablation-bars.png`
 
@@ -231,7 +231,7 @@ Thin black ±1σ error bars on each; numeric label above each bar in monospace. 
 Title: "Ablation of core reasoning components across 5 benchmarks". Subtitle: "error bars = ±1 std over 3 runs; numeric drops relative to full model shown above each bar."
 ```
 
-### No. 86 · LLM pretraining data-mixture sankey
+### No. 87 · LLM pretraining data-mixture sankey
 
 - Image: `docs/research-paper-figures/data-sankey.png`
 
@@ -252,7 +252,7 @@ Flow ribbons inherit source color with mid-labels showing token counts ("85B", "
 Title: "LLM pretraining data mixture and downstream splits". Subtitle: "token counts after deduplication and quality filtering; ribbon thickness ∝ token flow."
 ```
 
-### No. 87 · Multi-head attention heatmaps
+### No. 88 · Multi-head attention heatmaps
 
 - Image: `docs/research-paper-figures/attention-heatmap.png`
 
@@ -275,7 +275,7 @@ Cells: dusty-teal gradient, darker = higher weight. Peak cells outlined in 1px s
 Title: "Representative multi-head attention patterns in a 16-layer Transformer". Subtitle: "four of 256 heads, hand-picked for illustrative head-role diversity; inspired by Clark et al., 2019."
 ```
 
-### No. 88 · Frontier LLM family tree (2018–2026)
+### No. 89 · Frontier LLM family tree (2018–2026)
 
 - Image: `docs/research-paper-figures/model-timeline.png`
 
@@ -296,7 +296,7 @@ Solid slate-gray arcs = intra-family successors; warm-copper dashed arcs = cross
 Title: "Frontier LLM lineage, 2018 – 2026". Subtitle: "chips = model releases; solid arcs = intra-family successors; dashed arcs = cross-family distillation."
 ```
 
-### No. 89 · ReAct reasoning trace
+### No. 90 · ReAct reasoning trace
 
 - Image: `docs/research-paper-figures/react-trace.png`
 
@@ -324,7 +324,7 @@ Bottom: pill-shaped "Final answer: 2013" with a check glyph.
 Title: "ReAct trace: interleaved reasoning and tool-use on a factual-QA task". Subtitle: "Yao et al., 2022."
 ```
 
-### No. 90 · Memory Router for Multimodal Agents
+### No. 91 · Memory Router for Multimodal Agents
 
 - Image: `docs/research-paper-figures/memory-router-figure.png`
 
@@ -335,7 +335,7 @@ Title: "ReAct trace: interleaved reasoning and tool-use on a factual-QA task". S
 Design a premium conference-paper figure for an imaginary method called Memory Router for Multimodal Agents. Landscape layout, pure white background, large readable labels, elegant vector-clean boxes and curved arrows, tasteful teal slate and amber palette. Top strip shows the failure mode of a crowded baseline pipeline with red warning accents. Main panel shows User Query, Planner, Retriever, Tool Executor, Memory Router, Working Memory, Long-term Memory, Verifier, and a feedback loop. Beautiful spacing, crisp legend, subtle depth, polished academic styling, highly detailed but uncluttered.
 ```
 
-### No. 91 · Frontier Safety Eval Loop
+### No. 92 · Frontier Safety Eval Loop
 
 - Image: `docs/research-paper-figures/frontier-safety-eval-loop.png`
 
@@ -346,7 +346,7 @@ Design a premium conference-paper figure for an imaginary method called Memory R
 Create a beautiful research flowchart for an AI safety benchmark pipeline called Frontier Safety Eval Loop. Landscape figure, white background, large typography, vector-like shapes, soft indigo, coral, sage, and graphite palette. Show stages Prompt Suite, Model Runs, Judge Models, Human Audit, Failure Taxonomy, Patch Queue, and Re-run. Use clean swimlanes, numbered callouts, compact legends, and premium paper-ready styling. High detail, excellent color harmony, generous whitespace, no clutter, conference-quality diagram.
 ```
 
-### No. 92 · ICLR-style method figure
+### No. 93 · ICLR-style method figure
 
 - Image: `docs/research-paper-figures/hmr-iclr-figure.png`
 
@@ -357,7 +357,7 @@ Create a beautiful research flowchart for an AI safety benchmark pipeline called
 Create a polished ICLR-style Figure 1 for an imaginary method called "Hierarchical Memory Routing for Long-Context Multimodal Reasoning (HMR)". The top band shows the failure mode of naive long-context multimodal processing: one overcrowded horizontal token stream mixing text, image patches, retrieved documents, tool traces, and audio snippets, with red-orange warning accents for interference, attention dilution, memory collision, and quadratic compute cost. A clean horizontal divider separates the main lower panel, which presents the HMR framework as a spacious modular loop. Center: a Reasoning Controller with stages Observe_t to Update_t. Left: a three-level Memory Hierarchy with working cache, episodic memory, and semantic knowledge base. Right: Multimodal Streams entering selectively through routing paths. Bottom right: sparse experts activated only when needed. White background, vector-clean styling, neutral gray plus cool accents, minimal but legible labels, conference-paper clarity, no poster aesthetics.
 ```
 
-### No. 93 · LLM Persona Atlas
+### No. 94 · LLM Persona Atlas
 
 - Image: `docs/research-paper-figures/llm-persona-atlas.png`
 
@@ -374,7 +374,7 @@ Composition: left "Utterance Stream" with small translucent speech fragments flo
 Keep typography sparse, crisp, and clean. Add a small title "LLM Persona Atlas" and subtitle "from utterance style to model profile". Avoid dense method labels, big boxes, fake equations, fake citations, garbled text, photoreal humans, childish cartoon avatars, heavy shadows, and purple gradient backgrounds.
 ```
 
-### No. 94 · Multimodal agent experiment workflow figure
+### No. 95 · Multimodal agent experiment workflow figure
 
 - Image: `docs/research-paper-figures/multimodal-agent-experiment-workflow.png`
 
@@ -385,7 +385,7 @@ Keep typography sparse, crisp, and clean. Add a small title "LLM Persona Atlas" 
 Create a polished research workflow figure for a multimodal agent evaluation experiment. Landscape academic diagram on white background. Show stages Dataset Curation, Prompt Design, Tool Sandbox, Model Runs, Judge Ensemble, Error Taxonomy, Human Audit, and Final Report. Use a restrained blue, slate, and orange palette, vector-clean boxes, thin arrows, numbered callouts, tiny legends, and paper-ready typography. It should look like Figure 1 from a strong systems paper rather than a marketing poster.
 ```
 
-### No. 95 · Indirect prompt-injection attack flow
+### No. 96 · Indirect prompt-injection attack flow
 
 - Image: `docs/research-paper-figures/prompt-injection-flow.png`
 

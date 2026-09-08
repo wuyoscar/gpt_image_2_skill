@@ -1,10 +1,10 @@
 # 📊 Infographics & Field Guides
 
-Range: No. 67–74 · Count: 8
+Range: No. 68–75 · Count: 8
 
 Load this file only when the request matches this category. For cross-cutting writing rules, pair it with `craft.md`.
 
-### No. 67 · Song Dynasty social-media feed
+### No. 68 · Song Dynasty social-media feed
 
 - Image: `docs/infographics-field-guides/song-dynasty-feed.png`
 
@@ -15,7 +15,7 @@ Load this file only when the request matches this category. For cross-cutting wr
 "Song Dynasty People's Moments"/"SONG DYNASTY SOCIAL MEDIA FEED", Ancient and modern time-travel humor fusion interface design style, The image simulates a mobile phone social media interface, but the content is entirely Song Dynasty scenes, The avatar is a portrait of a Song Dynasty literati, Username "Su Dongpo SuShi_Official", Post content "Just arrived in Huangzhou, demoted but feeling okay. Made Dongpo pork myself today, tastes amazing, recipe attached:", The attached image is a close-up of Dongpo pork in Gongbi painting style, Likes list "Huang Tingjian, Qin Guan, Fo Yin etc. 126 people", Comments section "Wang Anshi: Hehe" "Sima Guang: Still the same taste", Interface elements such as the like icon are replaced with Song Dynasty patterns, The status bar shows "Great Song Mobile 5G" and "Third Year of Yuanfeng", The color scheme is mobile phone dark mode paired with elegant Song Dynasty tones, A masterpiece of fun collision between history and social media
 ```
 
-### No. 68 · Museum catalog disassembly infographic (唐代襦裙)
+### No. 69 · Museum catalog disassembly infographic (唐代襦裙)
 
 - Image: `docs/infographics-field-guides/museum-infographic.png`
 
@@ -41,7 +41,7 @@ If the subject is suitable for character display, use a full-body standing postu
 Avoid: poster feel, studio portrait feel, e-commerce feel, anime feel, cosplay feel, random annotations, incorrect structures, blurry text, fake materials, excessive decoration.
 ```
 
-### No. 69 · Encyclopedia field guide (Giant Panda)
+### No. 70 · Encyclopedia field guide (Giant Panda)
 
 - Image: `docs/infographics-field-guides/encyclopedia-panda.png`
 
@@ -68,7 +68,7 @@ Visual requirements: use a clean light background, soft colors, subtle shadows, 
 Do not make it look like a commercial promo poster. Emphasize knowledge organization, modular information, and a field-guide presentation.
 ```
 
-### No. 70 · Weekend Seoul travel guide poster
+### No. 71 · Weekend Seoul travel guide poster
 
 - Image: `docs/infographics-field-guides/seoul-travel-guide.png`
 
@@ -79,7 +79,7 @@ Do not make it look like a commercial promo poster. Emphasize knowledge organiza
 Generate a polished one-page Chinese travel guide poster for a fast weekend trip from Nanjing to Seoul in May. Use LARGE highly legible Chinese text, short phrases only, and no paragraph blocks. Focus on shopping, skincare, and a stylish Seongsu-dong route. Layout: big title, 4 modules only (行程 / 区域推荐 / 购物清单 / 美妆护肤), each with 2 to 4 short bullet points, plus a small cute route map with icons. Clean editorial infographic style, soft pastel colors, neat spacing, high readability, modern Xiaohongshu travel card aesthetic. Avoid tiny text, avoid dense explanations, avoid garbled characters.
 ```
 
-### No. 71 · Modular encyclopedia infographic card
+### No. 72 · Modular encyclopedia infographic card
 
 - Image: `docs/infographics-field-guides/snow-leopard-encyclopedia-card.png`
 
@@ -90,7 +90,7 @@ Generate a polished one-page Chinese travel guide poster for a fast weekend trip
 Generate a high-quality vertical science encyclopedia card about "雪豹 Snow Leopard". It should feel like a collectible modular knowledge infographic rather than a normal poster. Include one beautiful hero illustration, several zoomed-in detail callouts, rounded information modules, clear title hierarchy, compact encyclopedia content, rating cards, and a Top 5 facts module. Suggested sections: basic profile, habitat, appearance, hunting behavior, conservation risks, climate adaptation, suitable environment, and quick scorecard. Visual style: clean light background, soft palette, subtle shadows, refined icons, rounded info boxes, dense but readable information, polished editorial layout, high collection value.
 ```
 
-### No. 72 · Xiaohongshu cooking tutorial card
+### No. 73 · Xiaohongshu cooking tutorial card
 
 - Image: `docs/infographics-field-guides/cooking-tutorial-card.png`
 
@@ -101,7 +101,7 @@ Generate a high-quality vertical science encyclopedia card about "雪豹 Snow Le
 Create a Xiaohongshu-style viral cooking tutorial image in a 3:4 vertical layout for homemade scallion oil noodles. Cozy home-cooking vibe, warm inviting lifestyle aesthetic, 4 to 6 step grid layout, clean spacing, realistic food photography, soft natural lighting, slight film tone, warm color grading, visible oil sheen, steam, sauce texture, and hands interacting with the food. Add small Chinese annotations such as 切葱, 熬油, 拌面, 出锅. Avoid overcrowding or excessive text.
 ```
 
-### No. 73 · Camera styles reference board for iPhone photographers
+### No. 74 · Camera styles reference board for iPhone photographers
 
 - Image: `docs/infographics-field-guides/camera-styles-infographic.png`
 
@@ -112,7 +112,7 @@ Create a Xiaohongshu-style viral cooking tutorial image in a 3:4 vertical layout
 Make me an image in 35 mm film style of a diagram showing the knowledge of camera styles, presets, and what to know about them as an aspiring iPhone photographer that wants to pursue their passion. Build it as a rich multi-panel reference board with labeled sections for film looks, digital presets, portrait approaches, street photography styles, color temperature, grain, contrast, flash, framing, and common mistakes. Each camera and preset style should appear in its actual style instead of being rendered uniformly in one style. Make it visually dense, highly educational, beautifully designed, and easy to scan.
 ```
 
-### No. 74 · Chinese endangered-animal infographic
+### No. 75 · Chinese endangered-animal infographic
 
 - Image: `docs/infographics-field-guides/endangered-animal-chinese-infographic.png`
 

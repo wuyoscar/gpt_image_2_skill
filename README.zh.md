@@ -1443,6 +1443,69 @@ Create a clean brand kit presented as one square modular board for a fictional r
 
 ---
 
+#### 自然 SNS 日常人像
+
+
+---
+<p align="center">
+<a href="docs/photography/natural-sns-portrait.png"><img src="docs/photography/natural-sns-portrait.png" width="460" alt="自然光下的日常上半身镜自拍"/></a>
+</p>
+
+<p align="center"><sub>摄影 · <code>portrait</code> · <code>1087×1447</code> · Author: @LunarXuan · Source: <a href="https://github.com/LunarXuan/natural-sns-portrait">GitHub</a></sub></p>
+
+以下为源 Skill 的英文写实指南，搭配贡献者选定的镜自拍示例。使用时请结合场景、服装、姿势和构图要求；这份指南并非该示例图的完整生成提示词。
+
+<details>
+<summary><strong>📝 英文提示词</strong></summary>
+
+```text
+# Realism Guidelines
+
+Apply these as the default aesthetic target.
+
+## Basic mindset
+
+- Make the result feel like a natural photo of a clearly adult woman in her 20s that could plausibly appear on a real SNS feed.
+- Suppress CG-like texture, aggressive beauty filtering, plastic skin, and unnatural shine.
+- Preserve attractiveness without making the face or skin impossibly perfect.
+- Avoid fashion-campaign or advertisement styling; favor ordinary daily-life photography.
+- Prioritize real-world presence, lived-in detail, and natural imperfection over perfection.
+
+## Photography and texture
+
+- Prefer an everyday smartphone snapshot rather than a high-end camera look.
+- Use natural window light or existing practical lighting in the scene.
+- Allow mild hand-shake softness, smartphone sensor noise, modest sharpening artifacts, and slightly rough resolution.
+- Keep framing a little imperfect: slight tilt, uneven negative space, minor cropping, or off-center composition.
+- Avoid poses that look designed for a photoshoot; favor a caught-in-the-moment feeling.
+- Do not overuse cinematic depth of field. Ordinary phones often keep more of the scene legible.
+
+## Facial details
+
+- Keep realistic facial proportions and bone structure.
+- Do not enlarge the eyes. Preserve natural sclera ratio, eyelid thickness, and subtle left-right differences.
+- Keep expressions restrained and spontaneous; a faint smile or relaxed neutral expression is preferable to a forced grin.
+- Unless explicitly requested, avoid rigid straight-on passport framing.
+- Preserve mild facial asymmetry around brows, eyes, cheeks, and mouth.
+
+## Final touches
+
+- Keep pores, fine facial hair, soft redness, tiny blemishes, and natural shadow variation where appropriate.
+- Hands and fingers must have plausible count, joints, lengths, overlap, and grip.
+- Keep the overall impression clean, approachable, and cute while remaining physically believable.
+- Hair should contain flyaways, irregular clumps, slight frizz, and uneven strands rather than perfectly separated hair fibers.
+- Use realistic body proportions consistent with the reference or request. Avoid exaggerated hourglass shaping or model-like body retouching.
+- Favor the kind of cuteness that feels possible in real life rather than doll-like perfection.
+
+## Common negative constraints
+
+Avoid: CGI, 3D render, doll skin, porcelain skin, excessive skin smoothing, beauty-app face reshaping, huge eyes, perfectly symmetrical face, over-sharpened eyelashes, waxy highlights, glam studio lighting, commercial fashion campaign, artificial rim light, extreme bokeh, hyper-detailed pore texture, over-HDR, unreal anatomy, extra fingers, fused fingers, floating accessories, warped glasses, duplicated jewelry, fake text, malformed background objects.
+```
+
+</details>
+
+---
+
 <a id="gallery-screen-photography"></a>
 
 <h2 align="center">🖥️ 屏幕摄影</h2>

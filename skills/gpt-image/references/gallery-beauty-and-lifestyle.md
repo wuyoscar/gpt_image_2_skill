@@ -1,10 +1,10 @@
 # 💄 Beauty & Lifestyle
 
-Range: No. 153–154 · Count: 2
+Range: No. 154–155 · Count: 2
 
 Load this file only when the request matches this category. For cross-cutting writing rules, pair it with `craft.md`.
 
-### No. 153 · Quiet-luxury skincare morning tray
+### No. 154 · Quiet-luxury skincare morning tray
 
 - Image: `docs/beauty-lifestyle/skincare-morning-routine-tray.png`
 
@@ -15,7 +15,7 @@ Load this file only when the request matches this category. For cross-cutting wr
 Create a 3:4 vertical beauty lifestyle photograph for a premium skincare morning routine. Scene: a travertine bathroom counter beside a soft frosted window, with a minimal glass serum bottle, ceramic cleanser tube, cream jar, folded linen towel, jade roller, small dish of pearl hair clips, and a single dewy white camellia flower. Lighting: natural morning side light, gentle reflections, realistic glass thickness, soft shadows, clean negative space. Aesthetic: quiet luxury, Japanese minimalism meets modern spa editorial, cream / warm stone / translucent pale green palette. No visible brand logos, no readable fake labels except a tiny generic mark "AM ROUTINE", no human face, no clutter, no overdone CGI shine.
 ```
 
-### No. 154 · Fragrance evening ritual vanity
+### No. 155 · Fragrance evening ritual vanity
 
 - Image: `docs/beauty-lifestyle/fragrance-evening-ritual-vanity.png`
 
