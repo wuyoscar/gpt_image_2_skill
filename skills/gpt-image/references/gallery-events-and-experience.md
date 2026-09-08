@@ -1,10 +1,10 @@
 # 🎟️ Events & Experience
 
-Range: No. 155–156 · Count: 2
+Range: No. 156–157 · Count: 2
 
 Load this file only when the request matches this category. For cross-cutting writing rules, pair it with `craft.md`.
 
-### No. 155 · Zoo visitor wayfinding map
+### No. 156 · Zoo visitor wayfinding map
 
 - Image: `docs/events-experience/zoo-visitor-wayfinding-map.png`
 
@@ -15,7 +15,7 @@ Load this file only when the request matches this category. For cross-cutting wr
 Design a polished visitor wayfinding map for a fictional modern city zoo named "RIVERGATE ZOO". Landscape 3:2 orientation (1536×1024), friendly illustrated navigation-map style, clean paths and zones, readable labels, cute animal icons, and practical visitor signage. Include crisp in-image text: "RIVERGATE ZOO", "Main Gate", "Panda Forest", "Savanna Loop", "Aviary", "Reptile House", "Kids Farm", "Cafe", "Restrooms", "First Aid", and "Exit". Show color-coded walking routes, numbered landmarks, small legend, north arrow, accessibility icons, and soft botanical details. Palette: warm cream paper, zoo green, sky blue, coral, amber, and charcoal labels. Make it charming, useful, and map-like rather than a generic poster; avoid fake sponsor logos and cluttered microtext.
 ```
 
-### No. 156 · Huashan 5A scenic wayfinding map
+### No. 157 · Huashan 5A scenic wayfinding map
 
 - Image: `docs/events-experience/huashan-5a-scenic-wayfinding-map.png`
 

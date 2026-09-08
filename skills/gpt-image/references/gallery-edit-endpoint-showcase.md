@@ -1,10 +1,10 @@
 # ✨ Edit Endpoint Showcase
 
-Range: No. 100–101 · Count: 2
+Range: No. 101–102 · Count: 2
 
 Load this file only when the request matches this category. For cross-cutting writing rules, pair it with `craft.md`.
 
-### No. 100 · Chess board → winter evening (edit via `/v1/images/edits`) 🆕
+### No. 101 · Chess board → winter evening (edit via `/v1/images/edits`) 🆕
 
 - Images:
   - `docs/photography/chess-midgame.png` — Chess mid-game original
@@ -19,7 +19,7 @@ Load this file only when the request matches this category. For cross-cutting wr
 Make it a winter evening with heavy snowfall, snow dusted on the board and pieces, breath vapor in the air, cold blue-grey lighting, chess position still clearly readable. Preserve the original chess-board composition and landscape aspect ratio exactly; keep the board and pieces aligned and readable.
 ```
 
-### No. 101 · Tea poster → metro lightbox mockup
+### No. 102 · Tea poster → metro lightbox mockup
 
 - Image: `docs/edit-endpoint-showcase/tea-poster-metro-lightbox.png`
 

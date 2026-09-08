@@ -1,10 +1,10 @@
 # 🎨 Fine Art Painting
 
-Range: No. 136–140 · Count: 5
+Range: No. 137–141 · Count: 5
 
 Load this file only when the request matches this category. For cross-cutting writing rules, pair it with `craft.md`.
 
-### No. 136 · Vibrant Impasto: Floral Rhythms
+### No. 137 · Vibrant Impasto: Floral Rhythms
 
 - Image: `docs/fine-art-painting/impasto-floral-swirls.png`
 
@@ -15,7 +15,7 @@ Load this file only when the request matches this category. For cross-cutting wr
 A vivid oil painting in the lineage of post-impressionist impasto, featuring a dense garden of sunflowers and irises. The paint is applied in thick, rhythmic swirls and heavy dollops with a palette knife, creating a tangible 3D texture on the canvas. The color palette is an explosion of 'Chrome Yellow', 'Deep Ultramarine', and 'Vermilion Red', with visible strokes of white lead to indicate shimmering light. The composition is a tight, chaotic floral arrangement that seems to vibrate with energy. The lighting is harsh midday sun, which creates deep shadows within the ridges of the thick paint. There are no flat surfaces; every inch of the 'canvas' is covered in expressive, turbulent movement. The overall effect is one of raw emotion and the physical presence of the medium, focusing on the light-play over the peaks of the oil paint.
 ```
 
-### No. 137 · Impressionist Lineage: River at Dusk
+### No. 138 · Impressionist Lineage: River at Dusk
 
 - Image: `docs/fine-art-painting/impressionist-river-dusk.png`
 
@@ -26,7 +26,7 @@ A vivid oil painting in the lineage of post-impressionist impasto, featuring a d
 A serene landscape painting in the lineage of late 19th-century Impressionism, depicting a wide river reflecting a hazy violet and gold sunset. The water is rendered with short, horizontal dabs of color—'Lavender', 'Pale Peach', and 'Sage Green'—that suggest the gentle ripple of the surface. On the banks, weeping willows are suggested by soft, blurred strokes of dark emerald and charcoal. The atmosphere is thick with moisture and light, where the sky and water seem to merge at the horizon. There are no sharp lines or defined edges; the entire scene is a study of light, color, and atmospheric perspective. The lighting is the fleeting 'blue hour,' where the last rays of sun catch the tips of the waves. The mood is tranquil and meditative, capturing a fleeting moment of natural beauty through a soft, atmospheric lens.
 ```
 
-### No. 138 · Mid-Century Modern: The Blue Pool
+### No. 139 · Mid-Century Modern: The Blue Pool
 
 - Image: `docs/fine-art-painting/hockney-california-backyard.png`
 
@@ -37,7 +37,7 @@ A serene landscape painting in the lineage of late 19th-century Impressionism, d
 A flat, vibrant acrylic painting in the lineage of 1960s California modernism. The scene features a sparkling turquoise swimming pool in the foreground, with highly stylized white splash lines indicating a recent dive. In the background, a minimalist glass-and-steel house sits under a cloudless 'Cerulean' sky, flanked by two perfectly manicured palm trees. The color palette is dominated by saturated primaries: 'Turquoise Blue', 'Lemon Yellow', and 'Terracotta'. The lighting is the flat, shadowless glare of a Los Angeles afternoon, emphasizing the geometric shapes and clean lines of the architecture. The composition is strictly horizontal and balanced, with a sense of artificial stillness and leisure. The texture is smooth and matte, avoiding any visible brushstrokes to maintain a clean, graphic quality. It is a portrait of a sunny, suburban utopia.
 ```
 
-### No. 139 · Color Field Abstract: Crimson and Ochre
+### No. 140 · Color Field Abstract: Crimson and Ochre
 
 - Image: `docs/fine-art-painting/rothko-color-field-meditation.png`
 
@@ -48,7 +48,7 @@ A flat, vibrant acrylic painting in the lineage of 1960s California modernism. T
 A large-scale abstract painting in the lineage of mid-century Color Field expressionism. The composition consists of three stacked, soft-edged rectangular forms that appear to float against a darker background. The top rectangle is a deep 'Oxblood Red', the middle is a vibrating 'Burnt Orange', and the bottom is a dusty 'Ochre'. The edges of the shapes are hazy and feathered, allowing the colors to bleed into one another and create a sense of profound depth. The texture of the canvas is subtly visible through the thin, layered washes of pigment. There is no representational subject matter; the focus is entirely on the emotional resonance of the color and the monumental scale. The lighting is soft and ambient, making the colors seem to glow from within the canvas. The mood is spiritual, somber, and deeply immersive.
 ```
 
-### No. 140 · Social Realism: The Great Foundry
+### No. 141 · Social Realism: The Great Foundry
 
 - Image: `docs/fine-art-painting/rivera-social-industrial-mural.png`
 
